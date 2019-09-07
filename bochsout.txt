@@ -34,15 +34,15 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xf6372010. after alignment, vector=0xf6373000
+00000000000i[MEM0 ] allocated memory at 0xf6366010. after alignment, vector=0xf6367000
 00000000000i[MEM0 ] 16.00MB
-00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('../bochs/BIOS-bochs-latest')
-00000000000i[MEM0 ] rom at 0xc0000/39424 ('../bochs/vgabios.bin')
+00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('./bochs/BIOS-bochs-latest')
+00000000000i[MEM0 ] rom at 0xc0000/39424 ('./bochs/vgabios.bin')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Sun Sep  1 16:56:08 2019 (time0=1567382168)
+00000000000i[CMOS ] Setting initial clock to: Sat Sep  7 15:34:06 2019 (time0=1567895646)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
-00000000000i[FDD  ] fd0: '../linux-0.11/Image' ro=0, h=2,t=80,spt=18
+00000000000i[FDD  ] fd0: './linux-0.11/Image' ro=0, h=2,t=80,spt=18
 00000000000i[MEM0 ] Register memory access handlers: 0x000a0000 - 0x000bffff
 00000000000i[XGUI ] test_alloc_colors: 16 colors available out of 16 colors tried
 00000000000i[XGUI ] font 8 wide x 16 high, display depth = 24
@@ -56,7 +56,7 @@
 00000000000i[     ] init_mem of 'extfpuirq' plugin device by virtual method
 00000000000i[     ] init_mem of 'speaker' plugin device by virtual method
 00000000000i[     ] init_dev of 'harddrv' plugin device by virtual method
-00000000000i[HD   ] HD on ata0-0: '../hdc-0.11.img' 'flat' mode 
+00000000000i[HD   ] HD on ata0-0: './hdc-0.11.img' 'flat' mode 
 00000000000i[HD   ] translation on ata0-0 set to 'none'
 00000000000i[HD   ] Using boot sequence floppy, none, none
 00000000000i[HD   ] Floppy boot signature check is enabled
@@ -85,6 +85,7 @@
 00000000000i[     ] reset of 'extfpuirq' plugin device by virtual method
 00000000000i[     ] reset of 'speaker' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
+00000000000i[     ] set SIGINT handler to bx_debug_ctrlc_handler
 00000003445i[BIOS ] $Revision: 1.194 $ $Date: 2007/12/23 19:46:27 $
 00000317668i[KBD  ] reset-disable command received
 00000336412i[BIOS ] Starting rombios32
@@ -94,30 +95,28 @@
 00000562191i[VGA  ] VBE known Display Interface b0c0
 00000562223i[VGA  ] VBE known Display Interface b0c4
 00000565148i[VBIOS] VBE Bios $Id: vbe.c,v 1.58 2006/08/19 09:39:43 vruppert Exp $
-00000890730i[BIOS ] ata0-0: PCHS=204/16/38 translation=none LCHS=204/16/38
+00000888612i[BIOS ] ata0-0: PCHS=204/16/38 translation=none LCHS=204/16/38
 00001200000i[XGUI ] charmap update. Font Height is 16
-00004770915i[BIOS ] IDE time out
-00004969778i[BIOS ] Booting from 0000:7c00
-00145200000i[     ] cpu loop quit, shutting down simulator
-00145200000i[CPU  ] CPU is in real mode (active)
-00145200000i[CPU  ] CS.d_b = 16 bit
-00145200000i[CPU  ] SS.d_b = 16 bit
-00145200000i[CPU  ] | EAX=00001301  EBX=00000007  ECX=00000024  EDX=00001000
-00145200000i[CPU  ] | ESP=0000ffdc  EBP=0000001b  ESI=ffff0000  EDI=0008fdba
-00145200000i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-00145200000i[CPU  ] | SEG selector     base    limit G D
-00145200000i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00145200000i[CPU  ] |  CS:0000( 0004| 0|  0) 00000000 0000ffff 0 0
-00145200000i[CPU  ] |  DS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00145200000i[CPU  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00145200000i[CPU  ] |  ES:07c0( 0005| 0|  0) 00007c00 0000ffff 0 0
-00145200000i[CPU  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00145200000i[CPU  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00145200000i[CPU  ] | EIP=00007c19 (00007c19)
-00145200000i[CPU  ] | CR0=0x60000010 CR1=0 CR2=0x00000000
-00145200000i[CPU  ] | CR3=0x00000000 CR4=0x00000000
-00145200000i[CPU  ] >> jmp .+0xfffe (0x00007c19) : EBFE
-00145200000i[CMOS ] Last time is 1567382204 (Sun Sep  1 16:56:44 2019)
-00145200000i[XGUI ] Exit
-00145200000i[     ] restoring default signal behavior
-00145200000i[CTRL ] quit_sim called with exit code 1
+00004768797i[BIOS ] IDE time out
+00004967660i[BIOS ] Booting from 0000:7c00
+00005173814i[     ] dbg: Quit
+00005173814i[CPU  ] CPU is in real mode (active)
+00005173814i[CPU  ] CS.d_b = 16 bit
+00005173814i[CPU  ] SS.d_b = 16 bit
+00005173814i[CPU  ] | EAX=00000004  EBX=00000200  ECX=00000002  EDX=00000000
+00005173814i[CPU  ] | ESP=0000ffdc  EBP=00000038  ESI=ffff0000  EDI=0008fdba
+00005173814i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
+00005173814i[CPU  ] | SEG selector     base    limit G D
+00005173814i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00005173814i[CPU  ] |  CS:0000( 0004| 0|  0) 00000000 0000ffff 0 0
+00005173814i[CPU  ] |  DS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00005173814i[CPU  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00005173814i[CPU  ] |  ES:07c0( 0005| 0|  0) 00007c00 0000ffff 0 0
+00005173814i[CPU  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00005173814i[CPU  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00005173814i[CPU  ] | EIP=00007c33 (00007c33)
+00005173814i[CPU  ] | CR0=0x60000010 CR1=0 CR2=0x00000000
+00005173814i[CPU  ] | CR3=0x00000000 CR4=0x00000000
+00005173814i[CMOS ] Last time is 1567895647 (Sat Sep  7 15:34:07 2019)
+00005173814i[XGUI ] Exit
+00005173814i[CTRL ] quit_sim called with exit code 0
