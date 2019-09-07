@@ -16,5 +16,5 @@ msg1:
     .byte   13,10                     
     .ascii  "Now we are in SETUP"
     .byte   13,10,13,10
-.org 2046
+org 2046
     .word 0x0000
