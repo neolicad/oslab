@@ -34,12 +34,12 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xf62c0010. after alignment, vector=0xf62c1000
+00000000000i[MEM0 ] allocated memory at 0xf6399010. after alignment, vector=0xf639a000
 00000000000i[MEM0 ] 16.00MB
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('./bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/39424 ('./bochs/vgabios.bin')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Sun Sep  8 14:56:46 2019 (time0=1567979806)
+00000000000i[CMOS ] Setting initial clock to: Sat Sep 14 12:34:26 2019 (time0=1568489666)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: './linux-0.11/Image' ro=0, h=2,t=80,spt=18
@@ -85,7 +85,6 @@
 00000000000i[     ] reset of 'extfpuirq' plugin device by virtual method
 00000000000i[     ] reset of 'speaker' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
-00000000000i[     ] set SIGINT handler to bx_debug_ctrlc_handler
 00000003445i[BIOS ] $Revision: 1.194 $ $Date: 2007/12/23 19:46:27 $
 00000317668i[KBD  ] reset-disable command received
 00000336412i[BIOS ] Starting rombios32
@@ -99,24 +98,26 @@
 00001200000i[XGUI ] charmap update. Font Height is 16
 00004768797i[BIOS ] IDE time out
 00004967660i[BIOS ] Booting from 0000:7c00
-00005191547i[     ] dbg: Quit
-00005191547i[CPU  ] CPU is in real mode (active)
-00005191547i[CPU  ] CS.d_b = 16 bit
-00005191547i[CPU  ] SS.d_b = 16 bit
-00005191547i[CPU  ] | EAX=000007c0  EBX=00000007  ECX=0000000f  EDX=00001600
-00005191547i[CPU  ] | ESP=0000ffdc  EBP=00000044  ESI=ffff003e  EDI=00080005
-00005191547i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-00005191547i[CPU  ] | SEG selector     base    limit G D
-00005191547i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00005191547i[CPU  ] |  CS:07e0( 0004| 0|  0) 00007e00 0000ffff 0 0
-00005191547i[CPU  ] |  DS:9fc0( 0005| 0|  0) 0009fc00 0000ffff 0 0
-00005191547i[CPU  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00005191547i[CPU  ] |  ES:07c0( 0005| 0|  0) 00007c00 0000ffff 0 0
-00005191547i[CPU  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00005191547i[CPU  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00005191547i[CPU  ] | EIP=00000042 (00000042)
-00005191547i[CPU  ] | CR0=0x60000010 CR1=0 CR2=0x00000000
-00005191547i[CPU  ] | CR3=0x00000000 CR4=0x00000000
-00005191547i[CMOS ] Last time is 1567979807 (Sun Sep  8 14:56:47 2019)
-00005191547i[XGUI ] Exit
-00005191547i[CTRL ] quit_sim called with exit code 0
+00339600000p[XGUI ] >>PANIC<< POWER button turned off.
+00339600000i[CPU  ] CPU is in real mode (active)
+00339600000i[CPU  ] CS.d_b = 16 bit
+00339600000i[CPU  ] SS.d_b = 16 bit
+00339600000i[CPU  ] | EAX=00000e0a  EBX=00000007  ECX=00000000  EDX=00000026
+00339600000i[CPU  ] | ESP=0000ff00  EBP=0000fefe  ESI=ffff004d  EDI=00080014
+00339600000i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af PF cf
+00339600000i[CPU  ] | SEG selector     base    limit G D
+00339600000i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00339600000i[CPU  ] |  CS:07e0( 0004| 0|  0) 00007e00 0000ffff 0 0
+00339600000i[CPU  ] |  DS:07c0( 0005| 0|  0) 00007c00 0000ffff 0 0
+00339600000i[CPU  ] |  SS:07e0( 0005| 0|  0) 00007e00 0000ffff 0 0
+00339600000i[CPU  ] |  ES:07e0( 0005| 0|  0) 00007e00 0000ffff 0 0
+00339600000i[CPU  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00339600000i[CPU  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00339600000i[CPU  ] | EIP=000000c8 (000000c8)
+00339600000i[CPU  ] | CR0=0x60000010 CR1=0 CR2=0x00000000
+00339600000i[CPU  ] | CR3=0x00000000 CR4=0x00000000
+00339600000i[CPU  ] >> jmp .+0xfffe (0x00007ec8) : EBFE
+00339600000i[CMOS ] Last time is 1568489750 (Sat Sep 14 12:35:50 2019)
+00339600000i[XGUI ] Exit
+00339600000i[     ] restoring default signal behavior
+00339600000i[CTRL ] quit_sim called with exit code 1

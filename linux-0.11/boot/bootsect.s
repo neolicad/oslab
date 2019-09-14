@@ -24,6 +24,9 @@ load_setup:
     int 0x13
     j load_setup
 ok_load_setup:
+    mov ax,#0x07c0
+    mov ss,ax
+    mov sp,#0xff00
     jmpi 0,SETUPSEG
 msg1:
     .byte   13,10                     
