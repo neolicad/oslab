@@ -1,7 +1,7 @@
 #include<asm/segment.h>
 #include<errno.h>
 
-const int MAX_NAME_LENGTH=23;
+const int MAX_NAME_LENGTH = 23;
 char NAME[MAX_NAME_LENGTH + 1];
 
 /*
