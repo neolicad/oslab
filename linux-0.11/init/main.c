@@ -134,7 +134,15 @@ void main(void)		/* This really IS void, no error here. */
 	hd_init();
 	floppy_init();
 	sti();
-	move_to_user_mode();
+	move_to_user_mode();	
+  /* Load file system. */
+	setup((void *) &drive_info);
+  (void) open("/dev/tty0",O_RDWR,0);
+	(void) dup(0);
+	(void) dup(0);
+  /* File descriptor 3 points to /var/process.log. */
+  (void) open("/var/process.log",O_CREAT|O_TRUNC|O_WRONLY,0666);
+
 	if (!fork()) {		/* we count on this going ok */
 		init();
 	}
@@ -169,7 +177,6 @@ void init(void)
 {
 	int pid,i;
 
-	setup((void *) &drive_info);
 	(void) open("/dev/tty0",O_RDWR,0);
 	(void) dup(0);
 	(void) dup(0);
