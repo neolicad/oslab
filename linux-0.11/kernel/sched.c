@@ -117,7 +117,7 @@ void schedule(void)
 			if (((*p)->signal & ~(_BLOCKABLE & (*p)->blocked)) &&
           (*p)->state==TASK_INTERRUPTIBLE)
 				(*p)->state=TASK_RUNNING;
-
+    }
 /* this is the scheduler proper: */
 
 	while (1) {

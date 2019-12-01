@@ -25,6 +25,7 @@ void release(struct task_struct * p)
 	for (i=1 ; i<NR_TASKS ; i++)
 		if (task[i]==p) {
 			task[i]=NULL;
+      fprintk(3, "%d\t%c\t%d\n", p->pid, 'E', jiffies);
 			free_page((long)p);
 			schedule();
 			return;
