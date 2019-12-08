@@ -115,8 +115,10 @@ void schedule(void)
           (*p)->alarm = 0;
         }
       if (((*p)->signal & ~(_BLOCKABLE & (*p)->blocked)) &&
-          (*p)->state==TASK_INTERRUPTIBLE)
+          (*p)->state==TASK_INTERRUPTIBLE) {
         (*p)->state=TASK_RUNNING;
+        fprintk(3, "%d\t%c\t%d\n", (*p)->pid, 'J', jiffies);
+      }
     }
 /* this is the scheduler proper: */
 
@@ -138,7 +140,16 @@ void schedule(void)
             (*p)->priority;
   }
   p = &task[next];
-  if (next != 0 && *p != current) {
+  if (*p != current) {
+    // Task 0 will continuously invoke pause() when there is no other ready 
+    // tasks, under this situation task 0 is in TASK_INTERRUPTILBE state but 
+    // is actually running. If we don't check if current is task 0 here, the
+    // log will have counter-intuitive output like:
+    //    0 RUNNING
+    //    1 RUNNING
+    // (task 0 yield the control to 1 without a intermediate state 0 READY)
+    if (current->pid == 0 || current->state == TASK_RUNNING)
+      fprintk(3, "%d\t%c\t%d\n", current->pid, 'J', jiffies);
     fprintk(3, "%d\t%c\t%d\n", (*p)->pid, 'R', jiffies);
   }
   switch_to(next);
@@ -147,7 +158,9 @@ void schedule(void)
 int sys_pause(void)
 {
   current->state = TASK_INTERRUPTIBLE;
-  fprintk(3, "%d\t%c\t%d\n", current->pid, 'J', jiffies);
+  if (current->pid != 0) {
+    fprintk(3, "%d\t%c\t%d\n", current->pid, 'W', jiffies);
+  }
   schedule();
   return 0;
 }
@@ -182,7 +195,7 @@ void interruptible_sleep_on(struct task_struct **p)
   tmp=*p;
   *p=current;
 repeat: current->state = TASK_INTERRUPTIBLE;
-  fprintk(3, "%d\t%c\t%d\n", current->pid, 'J', jiffies);
+  fprintk(3, "%d\t%c\t%d\n", current->pid, 'W', jiffies);
   schedule();
   if (*p && *p != current) {
     (**p).state=0;

@@ -25,7 +25,6 @@ void release(struct task_struct * p)
 	for (i=1 ; i<NR_TASKS ; i++)
 		if (task[i]==p) {
 			task[i]=NULL;
-      fprintk(3, "%d\t%c\t%d\n", p->pid, 'E', jiffies);
 			free_page((long)p);
 			schedule();
 			return;
@@ -128,6 +127,7 @@ int do_exit(long code)
 	if (current->leader)
 		kill_session();
 	current->state = TASK_ZOMBIE;
+  fprintk(3, "%d\t%c\t%d\n", current->pid, 'E', jiffies);
 	current->exit_code = code;
 	tell_father(current->father);
 	schedule();
@@ -185,7 +185,7 @@ repeat:
 		if (options & WNOHANG)
 			return 0;
 		current->state=TASK_INTERRUPTIBLE;
-    fprintk(3, "%d\t%c\t%d\n", current->pid, 'J', jiffies);
+    fprintk(3, "%d\t%c\t%d\n", current->pid, 'W', jiffies);
 		schedule();
 		if (!(current->signal &= ~(1<<(SIGCHLD-1))))
 			goto repeat;
