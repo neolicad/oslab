@@ -21,7 +21,8 @@ switch_to_with_stack:
 # Switch PCB
   movl %ebx,%eax
   xchgl %eax,current
-# Rewrite tss, the kernel stack to be used when next schedule happens
+# Rewrite esp0 in tss, which specifies the top of kernel stack to be used when 
+# the next schedule happens
   movl tss,%ecx
   addl $4096,%ebx
   movl %ebx,ESP0(%ecx)

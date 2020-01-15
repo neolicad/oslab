@@ -93,7 +93,7 @@ int copy_process(int nr,long ebp,long edi,long esi,long gs,long none,
 	p->cutime = p->cstime = 0;
 	p->start_time = jiffies;
 
-  /* Copy SS:SP, EFLAGS, CS:IP into kerel stack. */
+  /* Copy SS:SP, EFLAGS, CS:IP into kernel stack. */
   kernel_stack = (long *)((long)p + PAGE_SIZE); 
   *(--kernel_stack) = ss & 0xffff;
   *(--kernel_stack) = esp;
