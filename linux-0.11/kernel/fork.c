@@ -18,6 +18,7 @@
 #include <asm/system.h>
 
 extern void write_verify(unsigned long address);
+extern void first_ret_from_kernel(void);
 
 long last_pid=0;
 
@@ -93,29 +94,29 @@ int copy_process(int nr,long ebp,long edi,long esi,long gs,long none,
 	p->start_time = jiffies;
 
   /* Copy SS:SP, EFLAGS, CS:IP into kerel stack. */
-  kernel_stack = p + PAGE_SIZE; 
-  *(--kernel_stack) = ss;
+  kernel_stack = (long *)((long)p + PAGE_SIZE); 
+  *(--kernel_stack) = ss & 0xffff;
   *(--kernel_stack) = esp;
   *(--kernel_stack) = eflags;
-  *(--kernel_stack) = cs;
+  *(--kernel_stack) = cs & 0xffff;
   *(--kernel_stack) = eip;
   /* Push registers and segment registers. The order of registers is the same
    * as that in the current stack.*/
-  *(--kernel_stack) = ds;
-  *(--kernel_stack) = es;
-  *(--kernel_stack) = fs;
+  *(--kernel_stack) = ds & 0xffff;
+  *(--kernel_stack) = es & 0xffff;
+  *(--kernel_stack) = fs & 0xffff;
   *(--kernel_stack) = edx;
   *(--kernel_stack) = ecx;
   *(--kernel_stack) = ebx;
-  *(--kernel_stack) = gs;
+  *(--kernel_stack) = gs & 0xffff;
   *(--kernel_stack) = esi;
   *(--kernel_stack) = edi;
   *(--kernel_stack) = ebp;
   *(--kernel_stack) = 0; /* eax */ 
 
-  *(--kernel_stack) = &first_ret_from_kernel;
-  *(--kernel_stack) = p + PAGE_SIZE - 1;
-  p->kernel_stack = kernel_stack;
+  *(--kernel_stack) = (long)(&first_ret_from_kernel);
+  *(--kernel_stack) = (long)p + PAGE_SIZE - 1;
+  p->kernel_stack = (long)kernel_stack;
 
 	p->tss.back_link = 0;
 	p->tss.esp0 = PAGE_SIZE + (long) p;

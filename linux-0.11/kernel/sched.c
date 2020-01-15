@@ -23,6 +23,9 @@
 #define _S(nr) (1<<((nr)-1))
 #define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
 
+extern void switch_to_with_stack(
+    struct task_struct *pnext, unsigned long next_ldt);
+
 void show_task(int nr,struct task_struct * p)
 {
 	int i,j = 4096-sizeof(struct task_struct);
@@ -56,6 +59,7 @@ union task_union {
 };
 
 static union task_union init_task = {INIT_TASK,};
+struct tss_struct *tss = &(init_task.task.tss);
 
 long volatile jiffies=0;
 long startup_time=0;
@@ -124,6 +128,7 @@ void schedule(void)
 	while (1) {
 		c = -1;
 		next = 0;
+    pnext = task[0];
 		i = NR_TASKS;
 		p = &task[NR_TASKS];
 		while (--i) {
@@ -138,7 +143,7 @@ void schedule(void)
 				(*p)->counter = ((*p)->counter >> 1) +
 						(*p)->priority;
 	}
-	switch_to(pnext, LDT(next));
+	switch_to_with_stack(pnext, _LDT(next));
 }
 
 int sys_pause(void)
