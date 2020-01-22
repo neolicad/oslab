@@ -21,8 +21,8 @@ switch_to_with_stack:
 # Switch PCB
   movl %ebx,%eax
   xchgl %eax,current
-# Rewrite esp0 in tss, which specifies the top of kernel stack to be used when 
-# the next schedule happens
+# Rewrite esp0 in tss, which specifies the kernel stack for the current 
+# process.
   movl tss,%ecx
   addl $4096,%ebx
   movl %ebx,ESP0(%ecx)
@@ -34,8 +34,10 @@ switch_to_with_stack:
 # Switch LDT
   movl 12(%ebp),%ecx
   lldt %cx
-# TODO: Why do we need to load %fs here, given that %fs will be loaded in 
-# ret_from_sys_call?  
+# TODO: %fs will be loaded in ret_from_sys_call, and so it seems unnecessay to 
+# load %fs here. However, fork will fail during copy memory with error message 
+# "copy_page_tables: already exist" if we don't load %fs here. Figure out why 
+# after learning memory.
   movl $0x17,%ecx
   mov %cx,%fs
 1: popl %ebp
