@@ -48,9 +48,10 @@ OLDSS		= 0x2C
 state	= 0		# these are offsets into the task-struct.
 counter	= 4
 priority = 8
-signal	= 12
-sigaction = 16		# MUST be 16 (=len of sigaction)
-blocked = (33*16)
+# kernel_stack = 12 # I know it's dead code, just for illustration
+signal	= 16
+sigaction = 20		# MUST be 16 (=len of sigaction)
+blocked = (33*16) + 4
 
 # offsets within sigaction
 sa_handler = 0

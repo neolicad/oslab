@@ -28,10 +28,16 @@ switch_to_with_stack:
   movl %ebx,ESP0(%ecx)
 # Switch kernel stack
   movl %esp,KERNEL_STACK(%eax)
+  # point ebx to task_struct
+  movl current,%ebx
   movl KERNEL_STACK(%ebx),%esp
 # Switch LDT
   movl 12(%ebp),%ecx
   lldt %cx
+# TODO: Why do we need to load %fs here, given that %fs will be loaded in 
+# ret_from_sys_call?  
+  movl $0x17,%ecx
+  mov %cx,%fs
 1: popl %ebp
   ret
 
