@@ -1,3 +1,6 @@
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -5,11 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
-
 
 #define N 10
 #define M 500
@@ -19,8 +18,6 @@ sem_t *Empty;
 sem_t *Full; 
 sem_t *Mutex; 
 int stock;
-pid_t wpid;
-int status = 0;
 
 void Producer();
 void Consumer();
@@ -34,6 +31,8 @@ const char *stock_file_name = "stock";
 
 int main() {
   int i;
+  pid_t wpid;
+  int status = 0;
   Empty = create_sem("empty", 10);
   Full = create_sem("full", 0);
   Mutex = create_sem("mutex", 1);
@@ -95,14 +94,14 @@ void Producer() {
   for (next = 0; next < M; next++) {
     sem_wait(Empty);
     sem_wait(Mutex);
-    // Write to file
+    // Write to file.
     snprintf(buffer, BUFFER_SIZE, "%d", next);
     len = strlen(buffer);
     buffer[len] = '\n';
     seek_last(stock);
     if(write(stock, buffer, len+1) == -1) {
       printf(
-          "Producer: failed to write to file! errnor: %s\n", strerror(errno));
+          "Producer: failed to write to file! error: %s\n", strerror(errno));
       exit(errno);
     }
     sem_post(Mutex);
@@ -115,7 +114,7 @@ void Consumer() {
   while (1) {
     sem_wait(Full);
     sem_wait(Mutex);
-    // Read a value and remove that value
+    // Read a value and remove that value.
     int num = read_and_delete_first_line(stock, stock_file_name);
     printf("%d: %d\n", getpid(), num);
     fflush(stdout);
@@ -126,7 +125,7 @@ void Consumer() {
 
 void seek_first(int m_file) {
   if (lseek(m_file, 0, SEEK_SET) == -1) {
-    printf("fail to move to the first char of the file! errno: %d\n", errno);
+    printf("Failed to move to the first char of the file! errno: %d\n", errno);
     exit(errno);
   } 
 }
@@ -134,7 +133,7 @@ void seek_first(int m_file) {
 void seek_last(int m_file) {
   if (lseek(m_file, 0, SEEK_END) == -1) {
     printf(
-        "fail to move to the pos after last char of the file! errno: %d\n", 
+        "Failed to move to the pos after last char of the file! errno: %d\n", 
         errno);
     exit(errno);
   } 
@@ -149,12 +148,9 @@ int read_and_delete_first_line(int m_file, const char *name) {
   tmp = create_new_file("tmp");
   // Find first line.
   seek_first(m_file);
-  // We should stop at the maximum digit number +1, e.g. if M=500, we should 
-  // stop at 4, if we don't find '\n' after reading 4 chars, something went 
-  // wrong. Just set a bigger upper bound here (I slack off ¯\_(ツ)_/¯). 
-  for (i = 0; i < BUFFER_SIZE ;i++) {
+  for (i = 0; i < BUFFER_SIZE; i++) {
     if (read(m_file, c, 1) == -1) {
-      printf("fail to read! errno:%d\n", errno);
+      printf("Failed to read! errno: %d\n", errno);
       exit(errno);
     }
     first[i] = c[0];
@@ -162,40 +158,40 @@ int read_and_delete_first_line(int m_file, const char *name) {
   }
   first[i] = '\0';
   first_num = atoi(first);
-  // Copy cotent of m_file to tmp, with first line deleted.
+  // Copy the  cotent in m_file to tmp, with first line deleted.
   while (1) {
     int res = read(m_file, c, 1);
     if (res == -1) {
-      printf("fail to read! errno:%d\n", errno);
+      printf("Failed to read! errno:%d\n", errno);
       exit(errno);
     }
     if (res == 0) break;
     if (write(tmp, c, 1) == -1) {
-      printf("fail to write! errno:%d\n", errno);
+      printf("Failed to write! errno:%d\n", errno);
       exit(errno);
     }
   }
-  // Copy content of tmp back to m_file.
+  // Copy the content in tmp back to m_file.
   seek_first(tmp);
   seek_first(m_file);
   for (i = 0; ; i++) {
     int res = read(tmp, c, 1);
     if (res == -1) {
-      printf("fail to read! errno:%d\n", errno);
+      printf("Failed to read! errno:%d\n", errno);
       exit(errno);
     }
     if (res == 0) break;
     if (write(m_file, c, 1) == -1) {
-      printf("fail to write! errno:%d\n", errno);
+      printf("Failed to write! errno:%d\n", errno);
       exit(errno);
     }
   }
   if (ftruncate(m_file, i) == -1) {
-    printf("fail to truncate file! error: %s\n", strerror(errno));
+    printf("Failed to truncate file! error: %s\n", strerror(errno));
     exit(errno);
   }
   if (remove("tmp") == -1) {
-    printf("fail to remove file: %s! errno:%d\n", name, errno);
+    printf("Failed to remove file: %s! errno:%d\n", name, errno);
     exit(errno);
   }
   return first_num;
