@@ -1,0 +1,25 @@
+
+Loading system ...
+
+Partition table ok.
+39062/62000 free blocks
+19517/20666 free inodes
+3450 buffers = 3532800 bytes buffer space
+Free mem: 12582912 bytes
+ Ok.
+[/usr/root]# ls
+README          hello.c         linux0.tgz      shoe
+gcclib140       hello.o         mtools.howto    shoelace.tar.Z
+hello           linux-0.00      sem.c           t.c
+[/usr/root]# gcc t.c sem.c -o a.out
+t.c:3: parse error before `*'
+t.c:3: warning: data definition lacks type or storage class
+t.c:3: parse error before `/'
+t.c:4: parse error before `/'
+t.c:5: parse error before `/'
+t.c:6: parse error before `/'
+sem.c:3: parse error before `*'
+sem.c:4: parse error before `sem_wait'
+sem.c:5: parse error before `sem_post'
+sem.c:6: parse error before `sem_unlink'
+[/usr/root]# ß
