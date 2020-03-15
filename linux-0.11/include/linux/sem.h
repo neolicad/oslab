@@ -3,5 +3,8 @@
 #endif
 
 struct sem_t {
-  int id;
+  int value;
+  char token;
+  struct task_struct *queue;
+  const char *name;
 };
