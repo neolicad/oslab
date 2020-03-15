@@ -120,7 +120,7 @@ int sys_sem_unlink(const char *name)
     return err;
   }
   cli();
-  // find the semaphore with the name "name"
+  // find the semaphore with the name $name
   for (i = 0; i < NUM_SEMS; i++) {
     if (strcmp(sems[i]->name, buf) == 0) {
       sem_pos = i;
@@ -134,7 +134,7 @@ int sys_sem_unlink(const char *name)
   }
   free_s(sem->name, (strlen(sem->name)+1) * sizeof(char));
   free_s(sem, sizeof(struct sem_t));
-  sem[sem_pos] = NULL;
+  sems[sem_pos] = NULL;
   sti();
   return 0;
 } 
