@@ -2,9 +2,9 @@
 #define NULL ((void *) 0)
 #endif
 
-struct sem_t {
+typedef struct Sem {
   int value;
-  char token;
+  int wakeup;
   struct task_struct *queue;
   const char *name;
-};
+} sem_t;
