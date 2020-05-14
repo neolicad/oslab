@@ -34,12 +34,12 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xf632b010. after alignment, vector=0xf632c000
+00000000000i[MEM0 ] allocated memory at 0xf638c010. after alignment, vector=0xf638d000
 00000000000i[MEM0 ] 16.00MB
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('./bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/39424 ('./bochs/vgabios.bin')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Tue Apr 14 19:15:14 2020 (time0=1586916914)
+00000000000i[CMOS ] Setting initial clock to: Sun May 10 15:54:31 2020 (time0=1589151271)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: './linux-0.11/Image' ro=0, h=2,t=80,spt=18
@@ -85,6 +85,7 @@
 00000000000i[     ] reset of 'extfpuirq' plugin device by virtual method
 00000000000i[     ] reset of 'speaker' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
+00000000000i[     ] set SIGINT handler to bx_debug_ctrlc_handler
 00000003445i[BIOS ] $Revision: 1.194 $ $Date: 2007/12/23 19:46:27 $
 00000317668i[KBD  ] reset-disable command received
 00000336412i[BIOS ] Starting rombios32
@@ -235,26 +236,34 @@
 00022368213i[FDD  ] read() on floppy image returns 0
 00022413168i[FDD  ] read() on floppy image returns 0
 00022463638i[BIOS ] int13_harddisk: function 15, unmapped device for ELDL=81
-01665200000p[XGUI ] >>PANIC<< POWER button turned off.
-01665200000i[CPU  ] CPU is in protected mode (active)
-01665200000i[CPU  ] CS.d_b = 32 bit
-01665200000i[CPU  ] SS.d_b = 32 bit
-01665200000i[CPU  ] | EAX=ffffffff  EBX=ffffffff  ECX=0001c6e4  EDX=00000010
-01665200000i[CPU  ] | ESP=0001c63c  EBP=0002242c  ESI=00000000  EDI=00000001
-01665200000i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
-01665200000i[CPU  ] | SEG selector     base    limit G D
-01665200000i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
-01665200000i[CPU  ] |  CS:0008( 0001| 0|  0) 00000000 00000fff 1 1
-01665200000i[CPU  ] |  DS:0010( 0002| 0|  0) 00000000 00000fff 1 1
-01665200000i[CPU  ] |  SS:0010( 0002| 0|  0) 00000000 00000fff 1 1
-01665200000i[CPU  ] |  ES:0010( 0002| 0|  0) 00000000 00000fff 1 1
-01665200000i[CPU  ] |  FS:0017( 0002| 1|  3) 00000000 0000009f 1 1
-01665200000i[CPU  ] |  GS:0017( 0002| 1|  3) 00000000 0000009f 1 1
-01665200000i[CPU  ] | EIP=00006beb (00006beb)
-01665200000i[CPU  ] | CR0=0x8000001b CR1=0 CR2=0x0805dc0c
-01665200000i[CPU  ] | CR3=0x00000000 CR4=0x00000000
-01665200000i[CPU  ] >> sub ecx, 0x00000004 : 83E904
-01665200000i[CMOS ] Last time is 1586917330 (Tue Apr 14 19:22:10 2020)
-01665200000i[XGUI ] Exit
-01665200000i[     ] restoring default signal behavior
-01665200000i[CTRL ] quit_sim called with exit code 1
+00063600000i[KBD  ] internal keyboard buffer full, ignoring scancode.(34)
+00063600000i[KBD  ] internal keyboard buffer full, ignoring scancode.(b4)
+00063600000i[KBD  ] internal keyboard buffer full, ignoring scancode.(2e)
+00063600000i[KBD  ] internal keyboard buffer full, ignoring scancode.(ae)
+00124800000i[KBD  ] internal keyboard buffer full, ignoring scancode.(34)
+00124800000i[KBD  ] internal keyboard buffer full, ignoring scancode.(b4)
+00124800000i[KBD  ] internal keyboard buffer full, ignoring scancode.(2e)
+00124800000i[KBD  ] internal keyboard buffer full, ignoring scancode.(ae)
+00600911360i[     ] Ctrl-C detected in signal handler.
+00835200000i[     ] Ctrl-C detected in signal handler.
+00835200000i[     ] dbg: Quit
+00835200000i[CPU  ] CPU is in protected mode (active)
+00835200000i[CPU  ] CS.d_b = 32 bit
+00835200000i[CPU  ] SS.d_b = 32 bit
+00835200000i[CPU  ] | EAX=00000000  EBX=0005cf0c  ECX=0000002e  EDX=00000000
+00835200000i[CPU  ] | ESP=03fffef8  EBP=03fffef8  ESI=00000001  EDI=00000001
+00835200000i[CPU  ] | IOPL=0 id vip vif ac vm RF nt of df IF tf sf zf af PF cf
+00835200000i[CPU  ] | SEG selector     base    limit G D
+00835200000i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00835200000i[CPU  ] |  CS:000f( 0001| 1|  3) 10000000 00000002 1 1
+00835200000i[CPU  ] |  DS:0017( 0002| 1|  3) 10000000 00003fff 1 1
+00835200000i[CPU  ] |  SS:0017( 0002| 1|  3) 10000000 00003fff 1 1
+00835200000i[CPU  ] |  ES:0017( 0002| 1|  3) 10000000 00003fff 1 1
+00835200000i[CPU  ] |  FS:0017( 0002| 1|  3) 10000000 00003fff 1 1
+00835200000i[CPU  ] |  GS:0017( 0002| 1|  3) 10000000 00003fff 1 1
+00835200000i[CPU  ] | EIP=0000006a (0000006a)
+00835200000i[CPU  ] | CR0=0x8000001b CR1=0 CR2=0x10002fac
+00835200000i[CPU  ] | CR3=0x00000000 CR4=0x00000000
+00835200000i[CMOS ] Last time is 1589151479 (Sun May 10 15:57:59 2020)
+00835200000i[XGUI ] Exit
+00835200000i[CTRL ] quit_sim called with exit code 0
