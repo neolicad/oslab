@@ -74,6 +74,8 @@ extern int sys_sem_create();
 extern int sys_sem_P();
 extern int sys_sem_V();
 extern int sys_sem_unlink();
+extern int sys_shmget();
+extern int sys_shmat();
 
 fn_ptr sys_call_table[] = { sys_setup, sys_exit, sys_fork, sys_read,
 sys_write, sys_open, sys_close, sys_waitpid, sys_creat, sys_link,
@@ -88,4 +90,4 @@ sys_lock, sys_ioctl, sys_fcntl, sys_mpx, sys_setpgid, sys_ulimit,
 sys_uname, sys_umask, sys_chroot, sys_ustat, sys_dup2, sys_getppid,
 sys_getpgrp, sys_setsid, sys_sigaction, sys_sgetmask, sys_ssetmask,
 sys_setreuid,sys_setregid, sys_sem_create, sys_sem_P, sys_sem_V, 
-sys_sem_unlink };
+sys_sem_unlink, sys_shmget, sys_shmat };

@@ -1,0 +1,212 @@
+./mm/memory.c:current->start_code + current->end_code)
+./mm/memory.c:	to_page += ((current->start_code>>20) & 0xffc);
+./mm/memory.c:	if (!current->executable)
+./mm/memory.c:	if (current->executable->i_count < 2)
+./mm/memory.c:		if ((*p)->executable != current->executable)
+./mm/memory.c:	tmp = address - current->start_code;
+./mm/memory.c:	if (!current->executable || tmp >= current->end_data) {
+./mm/memory.c:		nr[i] = bmap(current->executable,block);
+./mm/memory.c:	bread_page(page,current->executable->i_dev,nr);
+./mm/memory.c:	i = tmp + 4096 - current->end_data;
+./fs/namei.c:	else if (current->euid==inode->i_uid)
+./fs/namei.c:	else if (current->egid==inode->i_gid)
+./fs/namei.c:		if ((*dir) == current->root)
+./fs/namei.c:	if (!current->root || !current->root->i_count)
+./fs/namei.c:	if (!current->pwd || !current->pwd->i_count)
+./fs/namei.c:		inode = current->root;
+./fs/namei.c:		inode = current->pwd;
+./fs/namei.c:	mode &= 0777 & ~current->umask;
+./fs/namei.c:		inode->i_uid = current->euid;
+./fs/namei.c:	inode->i_mode = I_DIRECTORY | (mode & 0777 & ~current->umask);
+./fs/namei.c:	if ((dir->i_mode & S_ISVTX) && current->euid &&
+./fs/namei.c:	    inode->i_uid != current->euid) {
+./fs/namei.c:	    current->euid != inode->i_uid &&
+./fs/namei.c:	    current->euid != dir->i_uid) {
+./fs/fcntl.c:	if (fd >= NR_OPEN || !current->filp[fd])
+./fs/fcntl.c:		if (current->filp[arg])
+./fs/fcntl.c:	current->close_on_exec &= ~(1<<arg);
+./fs/fcntl.c:	(current->filp[arg] = current->filp[fd])->f_count++;
+./fs/fcntl.c:	if (fd >= NR_OPEN || !(filp = current->filp[fd]))
+./fs/fcntl.c:			return (current->close_on_exec>>fd)&1;
+./fs/fcntl.c:				current->close_on_exec |= (1<<fd);
+./fs/fcntl.c:				current->close_on_exec &= ~(1<<fd);
+./fs/bitmap.c:	inode->i_uid=current->euid;
+./fs/bitmap.c:	inode->i_gid=current->egid;
+./fs/ioctl.c:	if (fd >= NR_OPEN || !(filp = current->filp[fd]))
+./fs/char_dev.c:	if (current->tty<0)
+./fs/char_dev.c:	return rw_ttyx(rw,current->tty,buf,count,pos);
+./fs/stat.c:	if (fd >= NR_OPEN || !(f=current->filp[fd]) || !(inode=f->f_inode))
+./fs/open.c:	if (current->uid == inode->i_uid)
+./fs/open.c:	else if (current->gid == inode->i_gid)
+./fs/open.c:	if ((!current->uid) &&
+./fs/open.c:	iput(current->pwd);
+./fs/open.c:	current->pwd = inode;
+./fs/open.c:	iput(current->root);
+./fs/open.c:	current->root = inode;
+./fs/open.c:	if ((current->euid != inode->i_uid) && !suser()) {
+./fs/open.c:	mode &= 0777 & ~current->umask;
+./fs/open.c:		if (!current->filp[fd])
+./fs/open.c:	current->close_on_exec &= ~(1<<fd);
+./fs/open.c:	(current->filp[fd]=f)->f_count++;
+./fs/open.c:		current->filp[fd]=NULL;
+./fs/open.c:			if (current->leader && current->tty<0) {
+./fs/open.c:				current->tty = MINOR(inode->i_zone[0]);
+./fs/open.c:				tty_table[current->tty].pgrp = current->pgrp;
+./fs/open.c:			if (current->tty<0) {
+./fs/open.c:				current->filp[fd]=NULL;
+./fs/open.c:	current->close_on_exec &= ~(1<<fd);
+./fs/open.c:	if (!(filp = current->filp[fd]))
+./fs/open.c:	current->filp[fd] = NULL;
+./fs/exec.c: * "current->executable", and page faults do the actual loading. Clean.
+./fs/exec.c:	code_base = get_base(current->ldt[1]);
+./fs/exec.c:	set_base(current->ldt[1],code_base);
+./fs/exec.c:	set_limit(current->ldt[1],code_limit);
+./fs/exec.c:	set_base(current->ldt[2],data_base);
+./fs/exec.c:	set_limit(current->ldt[2],data_limit);
+./fs/exec.c:	e_uid = (i & S_ISUID) ? inode->i_uid : current->euid;
+./fs/exec.c:	e_gid = (i & S_ISGID) ? inode->i_gid : current->egid;
+./fs/exec.c:	if (current->euid == inode->i_uid)
+./fs/exec.c:	else if (current->egid == inode->i_gid)
+./fs/exec.c:	if (current->executable)
+./fs/exec.c:		iput(current->executable);
+./fs/exec.c:	current->executable = inode;
+./fs/exec.c:		current->sigaction[i].sa_handler = NULL;
+./fs/exec.c:		if ((current->close_on_exec>>i)&1)
+./fs/exec.c:	current->close_on_exec = 0;
+./fs/exec.c:	free_page_tables(get_base(current->ldt[1]),get_limit(0x0f));
+./fs/exec.c:	free_page_tables(get_base(current->ldt[2]),get_limit(0x17));
+./fs/exec.c:	current->used_math = 0;
+./fs/exec.c:	current->brk = ex.a_bss +
+./fs/exec.c:		(current->end_data = ex.a_data +
+./fs/exec.c:		(current->end_code = ex.a_text));
+./fs/exec.c:	current->start_stack = p & 0xfffff000;
+./fs/exec.c:	current->euid = e_uid;
+./fs/exec.c:	current->egid = e_gid;
+./fs/read_write.c:	if (fd >= NR_OPEN || !(file=current->filp[fd]) || !(file->f_inode)
+./fs/read_write.c:	if (fd>=NR_OPEN || count<0 || !(file=current->filp[fd]))
+./fs/read_write.c:	if (fd>=NR_OPEN || count <0 || !(file=current->filp[fd]))
+./fs/pipe.c:				current->signal |= (1<<(SIGPIPE-1));
+./fs/pipe.c:		if (!current->filp[i]) {
+./fs/pipe.c:			current->filp[ fd[j]=i ] = f[j];
+./fs/pipe.c:		current->filp[fd[0]]=NULL;
+./fs/pipe.c:		current->filp[fd[0]] =
+./fs/pipe.c:			current->filp[fd[1]] = NULL;
+./fs/super.c:	current->pwd = mi;
+./fs/super.c:	current->root = mi;
+./kernel/traps.c:	printk("base: %p, limit: %p\n",get_base(current->ldt[1]),get_limit(0x17));
+./kernel/traps.c:	printk("Pid: %d, process nr: %d\n\r",current->pid,0xffff & i);
+./kernel/sys.c:		if ((current->gid == rgid) || 
+./kernel/sys.c:			current->gid = rgid;
+./kernel/sys.c:		if ((current->gid == egid) ||
+./kernel/sys.c:		    (current->egid == egid) ||
+./kernel/sys.c:		    (current->sgid == egid) ||
+./kernel/sys.c:			current->egid = egid;
+./kernel/sys.c:	int old_ruid = current->uid;
+./kernel/sys.c:		if ((current->euid==ruid) ||
+./kernel/sys.c:			current->uid = ruid;
+./kernel/sys.c:                    (current->euid == euid) ||
+./kernel/sys.c:			current->euid = euid;
+./kernel/sys.c:			current->uid = old_ruid;
+./kernel/sys.c:		put_fs_long(current->utime,(unsigned long *)&tbuf->tms_utime);
+./kernel/sys.c:		put_fs_long(current->stime,(unsigned long *)&tbuf->tms_stime);
+./kernel/sys.c:		put_fs_long(current->cutime,(unsigned long *)&tbuf->tms_cutime);
+./kernel/sys.c:		put_fs_long(current->cstime,(unsigned long *)&tbuf->tms_cstime);
+./kernel/sys.c:	if (end_data_seg >= current->end_code &&
+./kernel/sys.c:	    end_data_seg < current->start_stack - 16384)
+./kernel/sys.c:		current->brk = end_data_seg;
+./kernel/sys.c:	return current->brk;
+./kernel/sys.c:		pid = current->pid;
+./kernel/sys.c:		pgid = current->pid;
+./kernel/sys.c:			if (task[i]->session != current->session)
+./kernel/sys.c:	return current->pgrp;
+./kernel/sys.c:	if (current->leader && !suser())
+./kernel/sys.c:	current->leader = 1;
+./kernel/sys.c:	current->session = current->pgrp = current->pid;
+./kernel/sys.c:	current->tty = -1;
+./kernel/sys.c:	return current->pgrp;
+./kernel/sys.c:	int old = current->umask;
+./kernel/sys.c:	current->umask = mask & 0777;
+./kernel/signal.c:	return current->blocked;
+./kernel/signal.c:	int old=current->blocked;
+./kernel/signal.c:	current->blocked = newmask & ~(1<<(SIGKILL-1));
+./kernel/signal.c:	handler = (long) current->sigaction[signum-1].sa_handler;
+./kernel/signal.c:	current->sigaction[signum-1] = tmp;
+./kernel/signal.c:	tmp = current->sigaction[signum-1];
+./kernel/signal.c:		(char *) (signum-1+current->sigaction));
+./kernel/signal.c:	if (current->sigaction[signum-1].sa_flags & SA_NOMASK)
+./kernel/signal.c:		current->sigaction[signum-1].sa_mask = 0;
+./kernel/signal.c:		current->sigaction[signum-1].sa_mask |= (1<<(signum-1));
+./kernel/signal.c:	struct sigaction * sa = current->sigaction + signr - 1;
+./kernel/signal.c:		put_fs_long(current->blocked,tmp_esp++);
+./kernel/signal.c:	current->blocked |= sa->sa_mask;
+./kernel/fork.c:	start += get_base(current->ldt[2]);
+./kernel/fork.c:	old_code_base = get_base(current->ldt[1]);
+./kernel/fork.c:	old_data_base = get_base(current->ldt[2]);
+./kernel/fork.c:	p->father = current->pid;
+./kernel/fork.c:	if (current->pwd)
+./kernel/fork.c:		current->pwd->i_count++;
+./kernel/fork.c:	if (current->root)
+./kernel/fork.c:		current->root->i_count++;
+./kernel/fork.c:	if (current->executable)
+./kernel/fork.c:		current->executable->i_count++;
+./kernel/chr_drv/tty_io.c:	while (!current->signal && EMPTY(*queue))
+./kernel/chr_drv/tty_io.c:	while (!current->signal && LEFT(*queue)<128)
+./kernel/chr_drv/tty_io.c:	oldalarm = current->alarm;
+./kernel/chr_drv/tty_io.c:			current->alarm = time+jiffies;
+./kernel/chr_drv/tty_io.c:		if (flag && (current->signal & ALRMMASK)) {
+./kernel/chr_drv/tty_io.c:			current->signal &= ~ALRMMASK;
+./kernel/chr_drv/tty_io.c:		if (current->signal)
+./kernel/chr_drv/tty_io.c:				current->alarm = time+jiffies;
+./kernel/chr_drv/tty_io.c:				current->alarm = oldalarm;
+./kernel/chr_drv/tty_io.c:	current->alarm = oldalarm;
+./kernel/chr_drv/tty_io.c:	if (current->signal && !(b-buf))
+./kernel/chr_drv/tty_io.c:		if (current->signal)
+./kernel/chr_drv/tty_ioctl.c:		dev=current->tty;
+./kernel/math/math_emulate.c:	current->signal |= 1<<(SIGFPE-1);
+./kernel/sched.c: * current-task
+./kernel/sched.c:	if (current->used_math) {
+./kernel/sched.c:		__asm__("frstor %0"::"m" (current->tss.i387));
+./kernel/sched.c:		current->used_math=1;
+./kernel/sched.c:	current->state = TASK_INTERRUPTIBLE;
+./kernel/sched.c:	current->state = TASK_UNINTERRUPTIBLE;
+./kernel/sched.c:repeat:	current->state = TASK_INTERRUPTIBLE;
+./kernel/sched.c:		current->utime++;
+./kernel/sched.c:		current->stime++;
+./kernel/sched.c:	if ((--current->counter)>0) return;
+./kernel/sched.c:	current->counter=0;
+./kernel/sched.c:	int old = current->alarm;
+./kernel/sched.c:	current->alarm = (seconds>0)?(jiffies+HZ*seconds):0;
+./kernel/sched.c:	return current->pid;
+./kernel/sched.c:	return current->father;
+./kernel/sched.c:	return current->uid;
+./kernel/sched.c:	return current->euid;
+./kernel/sched.c:	return current->gid;
+./kernel/sched.c:	return current->egid;
+./kernel/sched.c:	if (current->priority-increment>0)
+./kernel/sched.c:		current->priority -= increment;
+./kernel/exit.c:	if (priv || (current->euid==p->euid) || suser())
+./kernel/exit.c:		if (*p && (*p)->session == current->session)
+./kernel/exit.c:		if (*p && (*p)->pgrp == current->pid) 
+./kernel/exit.c:	free_page_tables(get_base(current->ldt[1]),get_limit(0x0f));
+./kernel/exit.c:	free_page_tables(get_base(current->ldt[2]),get_limit(0x17));
+./kernel/exit.c:		if (task[i] && task[i]->father == current->pid) {
+./kernel/exit.c:		if (current->filp[i])
+./kernel/exit.c:	iput(current->pwd);
+./kernel/exit.c:	current->pwd=NULL;
+./kernel/exit.c:	iput(current->root);
+./kernel/exit.c:	current->root=NULL;
+./kernel/exit.c:	iput(current->executable);
+./kernel/exit.c:	current->executable=NULL;
+./kernel/exit.c:	if (current->leader && current->tty >= 0)
+./kernel/exit.c:		tty_table[current->tty].pgrp = 0;
+./kernel/exit.c:	if (current->leader)
+./kernel/exit.c:	current->state = TASK_ZOMBIE;
+./kernel/exit.c:	current->exit_code = code;
+./kernel/exit.c:	tell_father(current->father);
+./kernel/exit.c:		if ((*p)->father != current->pid)
+./kernel/exit.c:			if ((*p)->pgrp != current->pgrp)
+./kernel/exit.c:				current->cutime += (*p)->utime;
+./kernel/exit.c:				current->cstime += (*p)->stime;
+./kernel/exit.c:		current->state=TASK_INTERRUPTIBLE;
+./kernel/exit.c:		if (!(current->signal &= ~(1<<(SIGCHLD-1))))
+./include/linux/kernel.h:#define suser() (current->euid == 0)

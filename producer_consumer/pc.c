@@ -94,15 +94,22 @@ void Consumer() {
 
 sem_t *create_sem(const char *name, int value) {
   sem_t *semaphore;
+  // Remove if already exists
   if (sem_unlink(name) == -1) {
-    printf("fail to unlink semaphore: %s, error: %s\n", name, strerror(errno));
-    exit(-1);
+    printf(
+        "%d: failed to unlink semaphore: %s, error: %s\n", 
+        __LINE__,
+        name, 
+        strerror(errno));
   }
   if ((semaphore = sem_open(name, O_CREAT|O_EXCL, O_RDWR, value)) 
           == SEM_FAILED) {
     printf(
-        "Failed to create semaphore: %s, error:%s\n", name, strerror(errno));
-    exit(-1);
+        "%d: failed to create semaphore: %s, error:%s\n", 
+        __LINE__,
+        name, 
+        strerror(errno));
+    exit(1);
   }
   return semaphore;
 }
