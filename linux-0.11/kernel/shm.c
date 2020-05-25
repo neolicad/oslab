@@ -4,18 +4,36 @@
 #include <sys/types.h>
 #include <errno.h>
 
+#ifndef NULL
 #define NULL ((void *) 0)
+#endif
 #define SHARED_MEMORY_SIZE 10
+
+/*
+ * Caveat: If multiple processes share the same physical memory - which is what 
+ * this shared memory module is used for - and one of the processes exits, 
+ * the physical page will be marked unused and it will be reused unexpected. In 
+ * other words, the behavior is incorrect when one of the shared memory exits, 
+ * and this module only works when all the shared processes are alive. 
+ * I haven't fully gone through the whole page lifecycle, but to make this 
+ * module more general, we may need to:
+ * 1. Have a notion in mem_map to show that it is a shared memory.  
+ * 2. When a process exits, do not throw a kernel panic (in exit.c) if mem_map 
+ * is not 1 but the page is a shared one.
+ * 3. Do not use put page here, because it is intended to be used for attaching 
+ * a newly created (not attached to the linear space) page. Have a dedicated 
+ * logic here for attaching the shared memory to user space.
+ */
 
 typedef struct shared_memory {
   unsigned int key;
   size_t size;
-  unsigned long page;
+  unsigned long page; /* physical address of the corresponding page */
 } shared_memory_t;
 
 shared_memory_t *shms[SHARED_MEMORY_SIZE];
 
-/**
+/*
  * Creates (if not exist) or gets (if already exists) the shared memory with 
  * speicified key and size. 
  * Return the index of the shared memory in shms if succeeds, or the errno if 
@@ -24,23 +42,23 @@ shared_memory_t *shms[SHARED_MEMORY_SIZE];
 int sys_shmget(unsigned int key, size_t size, int shmflg) {
   int i;
   unsigned long page;
+
   if (size < 0) {
     return -EINVAL;
   }
   if (size > PAGE_SIZE) {
     return -E2BIG;
   }
-
   for (i = 0; i < SHARED_MEMORY_SIZE; i++) {
     if (shms[i] != NULL && shms[i]->key == key) {
       break;
     }
   }
-  // Shared memory with key already exists, return the index;
+  /* The shared memory keyed on `key` already exists, return the index; */
   if (i != SHARED_MEMORY_SIZE) {
     return i;
   }
-  // Otherwise, create one.
+  /* Otherwise, create one. */
   for (i = 0; i < SHARED_MEMORY_SIZE; i++) {
     if (shms[i] == NULL) {
       break; 
@@ -59,8 +77,14 @@ int sys_shmget(unsigned int key, size_t size, int shmflg) {
   return i;
 }
 
+/*
+ * Attaches to the local user space the shared memory represented by the i-th 
+ * item in shms. Returns the logical address of the attached memory if 
+ * succeeds, or errno if failes. 
+ */
 void *sys_shmat(int i, const void *shmaddr, int shmflg) {
   unsigned long address;
+
   if (i < 0) {
     return -EINVAL;
   }
