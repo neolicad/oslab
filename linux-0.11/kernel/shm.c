@@ -32,7 +32,7 @@ int sys_shmget(unsigned int key, size_t size, int shmflg) {
   }
 
   for (i = 0; i < SHARED_MEMORY_SIZE; i++) {
-    if (shms[i]!= NULL && shms[i]->key == key) {
+    if (shms[i] != NULL && shms[i]->key == key) {
       break;
     }
   }
@@ -76,7 +76,9 @@ void *sys_shmat(int i, const void *shmaddr, int shmflg) {
     return -ERANGE;
   }
   current->brk = address + PAGE_SIZE;
-  /* start_code is the linear address at the start of the current process. */
+  /* 
+   * start_code is the start of the current process's memory (linear address). 
+   */
   if (!put_page(shms[i]->page, current->start_code + address)) {
     return -ENOMEM;
   }

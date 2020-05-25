@@ -1,25 +1,25 @@
-/usr/include/semaphore.h:17: `sem' undeclared (first use this function)
-/usr/include/semaphore.h:17: (Each undeclared identifier is reported only once
-/usr/include/semaphore.h:17: for each function it appears in.)
-/usr/include/semaphore.h:18: parse error before `)'
-/usr/include/semaphore.h: At top level:
-/usr/include/semaphore.h:28: parse error before `*'
-/usr/include/semaphore.h: In function sem_wait:
-/usr/include/semaphore.h:29: `sem' undeclared (first use this function)
-/usr/include/semaphore.h: At top level:
-/usr/include/semaphore.h:35: parse error before `*'
-/usr/include/semaphore.h: In function sem_post:
-/usr/include/semaphore.h:36: `sem' undeclared (first use this function)
-producer.c: At top level:
-producer.c:11: parse error before `*'
-producer.c:11: warning: data definition lacks type or storage class
-producer.c:12: parse error before `*'
-producer.c:12: warning: data definition lacks type or storage class
-producer.c:13: parse error before `*'
-producer.c:13: warning: data definition lacks type or storage class
-producer.c:17: parse error before `*'
-producer.c:17: warning: data definition lacks type or storage class
-In file included from sem.c:6:
-/usr/include/stdlib.h:18: warning: `malloc' was previously implicitly declared t
-o return `int'
-[/usr/root]# ß
+
+Partition table ok.
+38830/62000 free blocks
+19388/20666 free inodes
+3449 buffers = 3531776 bytes buffer space
+Free mem: 12582912 bytes
+ Ok.
+[/usr/root]# sh c.sh
+/usr/include/sys/shm.h: In function shmat:
+In file included from producer.c:1:
+/usr/include/sys/shm.h:10: warning: return of pointer from integer lacks a cast
+ : command not found
+/usr/include/sys/shm.h: In function shmat:
+In file included from consumer.c:1:
+/usr/include/sys/shm.h:10: warning: return of pointer from integer lacks a cast
+[/usr/root]# sh r.sh
+56 at shm.c: page = f81000
+57 at shm.c: mem_map entry = 1
+84 at shm.c: page = f81000
+85 at shm.c: mem_map entry = 1
+84 at shm.c: page = f81000
+85 at shm.c: mem_map entry = 11
+mem_map disagrees with 00F81000 at 14006000
+Kernel panic: trying to free free page
+ß
