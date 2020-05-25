@@ -14,15 +14,15 @@
  * this shared memory module is used for - and one of the processes exits, 
  * the physical page will be marked unused and it will be reused unexpected. In 
  * other words, the behavior is incorrect when one of the shared memory exits, 
- * and this module only works when all the shared processes are alive. 
+ * and this module only works when all the sharing processes are alive. 
  * I haven't fully gone through the whole page lifecycle, but to make this 
  * module more general, we may need to:
- * 1. Have a notion in mem_map to show that it is a shared memory.  
+ * 1. Have in mem_map a notion to show that it is a shared memory.  
  * 2. When a process exits, do not throw a kernel panic (in exit.c) if mem_map 
  * is not 1 but the page is a shared one.
- * 3. Do not use put page here, because it is intended to be used for attaching 
- * a newly created (not attached to the linear space) page. Have a dedicated 
- * logic here for attaching the shared memory to user space.
+ * 3. Do not use put_page here, because it is intended to be used for attaching 
+ * a newly created (not yet attached to the linear space) page. Have a 
+ * dedicated logic here for attaching the shared memory to user space.
  */
 
 typedef struct shared_memory {
@@ -35,7 +35,7 @@ shared_memory_t *shms[SHARED_MEMORY_SIZE];
 
 /*
  * Creates (if not exist) or gets (if already exists) the shared memory with 
- * speicified key and size. 
+ * the specified key and size. 
  * Return the index of the shared memory in shms if succeeds, or the errno if 
  * fails.
  */
