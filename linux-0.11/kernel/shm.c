@@ -15,14 +15,22 @@
  * the physical page will be marked unused and it will be reused unexpected. In 
  * other words, the behavior is incorrect when one of the shared memory exits, 
  * and this module only works when all the sharing processes are alive. 
+ * Moreover, when more that 1 sharing processes exit, the exit procedure will 
+ * panic. The reason is that (in exit.c) kernel will decrease mem_map value 
+ * (indicating the reference count), and if the current value is already 0, 
+ * kernel will panic. In the current implementation, the mem_map value is 
+ * always 1 despite how many processes are sharing and it will become 0 after 
+ * the 1st sharing process exits, so that the 2nd exiting sharing process will 
+ * panic against the check.
  * I haven't fully gone through the whole page lifecycle, but to make this 
  * module more general, we may need to:
- * 1. Have in mem_map a notion to show that it is a shared memory.  
- * 2. When a process exits, do not throw a kernel panic (in exit.c) if mem_map 
- * is not 1 but the page is a shared one.
- * 3. Do not use put_page here, because it is intended to be used for attaching 
- * a newly created (not yet attached to the linear space) page. Have a 
- * dedicated logic here for attaching the shared memory to user space.
+ * 1. Have in mem_map a notion to show that it is used.
+ * 2. When getting free page, set the "used" bit but keep the mem_map value
+ * as 0.
+ * 3. When putting the page, increase the corresponding value in mem_map, and 
+ * only check mem_map >= 0.
+ * 4. When searching for free page, check the "used" bit and only selected the 
+ * page with "used" bit unset.
  */
 
 typedef struct shared_memory {
@@ -42,6 +50,7 @@ shared_memory_t *shms[SHARED_MEMORY_SIZE];
 int sys_shmget(unsigned int key, size_t size, int shmflg) {
   int i;
   unsigned long page;
+  extern unsigned char get_mem_map_value(unsigned int page);
 
   if (size < 0) {
     return -EINVAL;
@@ -67,7 +76,7 @@ int sys_shmget(unsigned int key, size_t size, int shmflg) {
   if (i == SHARED_MEMORY_SIZE) {
     return -EINVAL;
   }
-  if (!(page=get_free_page())) {
+  if (!(page=get_free_shared_page())) {
     return -ENOMEM;
   }
   shms[i] = (shared_memory_t *) malloc(sizeof(shared_memory_t));
@@ -80,10 +89,11 @@ int sys_shmget(unsigned int key, size_t size, int shmflg) {
 /*
  * Attaches to the local user space the shared memory represented by the i-th 
  * item in shms. Returns the logical address of the attached memory if 
- * succeeds, or errno if failes. 
+ * succeeds, or errno if fails. 
  */
-void *sys_shmat(int i, const void *shmaddr, int shmflg) {
+void *sys_kshmat(int i, const void *shmaddr, int shmflg) {
   unsigned long address;
+  unsigned long page;
 
   if (i < 0) {
     return -EINVAL;

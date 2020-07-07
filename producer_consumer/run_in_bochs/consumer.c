@@ -15,6 +15,7 @@
 sem_t *Empty; 
 sem_t *Full; 
 sem_t *Mutex; 
+vendor_t *Vendor;
 
 void Consumer();
 extern sem_t *create_sem(const char *name, int value);
@@ -23,24 +24,7 @@ int main() {
   int i;
   pid_t wpid;
   int status = 0;
-
-  Empty = create_sem("empty", 10);
-  Full = create_sem("full", 0);
-  Mutex = create_sem("mutex", 1);
-  for (i = 0; i < N; i++) {
-    if (!fork()) {
-       Consumer();
-    }
-  }        
-  while ((wpid = wait(&status)) > 0);
-  return 0;
-}
-
-void Consumer() {
-  int num;
-  int next_full;
   int shm_id;
-  vendor_t *Vendor;
 
   shm_id = shmget(KEY, sizeof(vendor_t), 0666); 
   if (shm_id == -1) {
@@ -61,12 +45,28 @@ void Consumer() {
         strerror(errno));
     exit(1);
   }
+  Empty = create_sem("empty", 10);
+  Full = create_sem("full", 0);
+  Mutex = create_sem("mutex", 1);
+  for (i = 0; i < N; i++) {
+    if (!fork()) {
+       Consumer();
+    }
+  }        
+  while ((wpid = wait(&status)) > 0);
+  return 0;
+}
+
+void Consumer() {
+  int num;
+  int next_full;
+
   while (1) {
     sem_wait(Full);
     sem_wait(Mutex);
     next_full = Vendor->next_full;  
     num = Vendor->slots[next_full++];
-    Vendor->next_full = next_full == SLOTS? 0 : next_full;
+    Vendor->next_full = next_full == SLOTS ? 0 : next_full;
     printf("%d: %d\n", getpid(), num);
     fflush(stdout);
     sem_post(Mutex);

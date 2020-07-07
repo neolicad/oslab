@@ -134,7 +134,7 @@
 #define __NR_sem_V 74
 #define __NR_sem_unlink 75
 #define __NR_shmget 76
-#define __NR_shmat 77
+#define __NR_kshmat 77
 
 #define _syscall0(type,name) \
 type name(void) \

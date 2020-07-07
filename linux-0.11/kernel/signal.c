@@ -96,7 +96,7 @@ void do_signal(long signr,long eax, long ebx, long ecx, long edx,
 	if (!sa_handler) {
 		if (signr==SIGCHLD)
 			return;
-		else
+    else 
 			do_exit(1<<(signr-1));
 	}
 	if (sa->sa_flags & SA_ONESHOT)

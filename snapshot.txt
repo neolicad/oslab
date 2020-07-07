@@ -1,25 +1,25 @@
 
 Partition table ok.
-38830/62000 free blocks
-19388/20666 free inodes
-3449 buffers = 3531776 bytes buffer space
+38721/62000 free blocks
+19379/20666 free inodes
+3448 buffers = 3530752 bytes buffer space
 Free mem: 12582912 bytes
  Ok.
-[/usr/root]# sh c.sh
-/usr/include/sys/shm.h: In function shmat:
-In file included from producer.c:1:
-/usr/include/sys/shm.h:10: warning: return of pointer from integer lacks a cast
- : command not found
-/usr/include/sys/shm.h: In function shmat:
-In file included from consumer.c:1:
-/usr/include/sys/shm.h:10: warning: return of pointer from integer lacks a cast
-[/usr/root]# sh r.sh
-56 at shm.c: page = f81000
-57 at shm.c: mem_map entry = 1
-84 at shm.c: page = f81000
-85 at shm.c: mem_map entry = 1
-84 at shm.c: page = f81000
-85 at shm.c: mem_map entry = 11
-mem_map disagrees with 00F81000 at 14006000
-Kernel panic: trying to free free page
+[/usr/root]# sh p.sh
+shm.c: In function shmat:
+shm.c:8: warning: return of pointer from integer lacks a cast
+shm.c: In function shmat:
+shm.c:8: warning: return of pointer from integer lacks a cast
+Begin of producer!
+sys_shmat, before put_page, *page=0
+sys_shmat, after put_page, *page=0
+[p]*shared = 0
+Begin of consumer!
+sys_shmat, before put_page, *page=1234
+sys_shmat, after put_page, *page=1234
+        [c]*shared=0
+[p]*shared = 0
+        [c]*shared=1234
+[p]*shared = 1234
+        [c]*shared=1234
 ß

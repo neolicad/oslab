@@ -54,13 +54,38 @@ static long HIGH_MEMORY = 0;
 #define copy_page(from,to) \
 __asm__("cld ; rep ; movsl"::"S" (from),"D" (to),"c" (1024))
 
+#define IS_SHARED(mem_map_entry) (mem_map_entry&0x2)
+#define IS_CLAIMED(mem_map_etnry) (mem_map_entry&0x1)
+#define REFERENCE_COUNT(mem_map_entry) (mem_map_entry>>2)
+#define CLEAR_PAGE 0
+
 static unsigned char mem_map [ PAGING_PAGES ] = {0,};
+
+static inline unsigned char increase_reference_or_panic(
+    unsigned char mem_map_entry) {
+  if (mem_map_entry >> 2 == 0x3f) {
+    panic("Trying to increase the reference count of mem_map entry, but the "
+        "count is already of the MAX value!");
+  }
+  return mem_map_entry + 0x4; 
+}
+
+static inline unsigned char decrease_reference_or_panic(
+    unsigned char mem_map_entry, int map_nr) {
+  if (mem_map_entry >> 2 == 0) {
+    printk("decrease_reference_or_panic panic: mem_map_entry: 0x%x, map_nr: %d\n", mem_map_entry, map_nr);
+    panic("Trying to decrease the reference count of mem_map entry, but the "
+        "count is already 0!");
+  }
+  return mem_map_entry - 0x4; 
+}
+
 
 /*
  * Get physical address of first (actually last :-) free page, and mark it
  * used. If no free pages left, return 0.
  */
-unsigned long get_free_page(void)
+static unsigned long get_free_page_internal(void)
 {
 register unsigned long __res asm("ax");
 
@@ -82,20 +107,52 @@ __asm__("std ; repne ; scasb\n\t"
 return __res;
 }
 
+unsigned long get_free_page(void) {
+  unsigned long page;
+  unsigned char mem_map_entry;
+
+  if (!(page=get_free_page_internal())) {
+    return 0;
+  }
+  mem_map_entry = mem_map[MAP_NR(page)];
+  /* 
+   * We don't need to check the reference count here because it is guaranteed 
+   * to be 0, since this is a clear page.
+   */
+  mem_map[MAP_NR(page)] = mem_map_entry + 0x4;
+  return page;
+}
+
+unsigned long get_free_shared_page(void) {
+  unsigned long page;
+  if (!(page=get_free_page_internal())) {
+    return 0;
+  }
+  mem_map[MAP_NR(page)] |= 0x2;
+  return page;
+}
+
+unsigned char get_mem_map_value(unsigned long page) {
+  return mem_map[MAP_NR(page)];
+}
+
 /*
  * Free a page of memory at physical address 'addr'. Used by
  * 'free_page_tables()'
  */
 void free_page(unsigned long addr)
 {
+  unsigned char mem_map_entry;
+
 	if (addr < LOW_MEM) return;
 	if (addr >= HIGH_MEMORY)
 		panic("trying to free nonexistent page");
-	addr -= LOW_MEM;
-	addr >>= 12;
-	if (mem_map[addr]--) return;
-	mem_map[addr]=0;
-	panic("trying to free free page");
+  mem_map_entry = mem_map[MAP_NR(addr)];
+  mem_map_entry = decrease_reference_or_panic(mem_map_entry, MAP_NR(addr));
+  if (!IS_SHARED(mem_map_entry) && REFERENCE_COUNT(mem_map_entry) == 0) {
+    mem_map_entry = CLEAR_PAGE;
+  }
+  mem_map[MAP_NR(addr)] = mem_map_entry; 
 }
 
 /*
@@ -154,6 +211,7 @@ int copy_page_tables(unsigned long from,unsigned long to,long size)
 	unsigned long this_page;
 	unsigned long * from_dir, * to_dir;
 	unsigned long nr;
+  unsigned char mem_map_entry;
 
 	if ((from&0x3fffff) || (to&0x3fffff))
 		panic("copy_page_tables called with wrong alignment");
@@ -174,16 +232,23 @@ int copy_page_tables(unsigned long from,unsigned long to,long size)
 			this_page = *from_page_table;
 			if (!(1 & this_page))
 				continue;
+      mem_map_entry = mem_map[MAP_NR(this_page)];
+      if (IS_SHARED(mem_map_entry)) {
+        /* Shared page is always in the main memory. */
+        *to_page_table = this_page;
+        mem_map[MAP_NR(this_page)] = 
+            increase_reference_or_panic(mem_map_entry);
+        continue;
+      }
 			this_page &= ~2;
 			*to_page_table = this_page;
 			if (this_page > LOW_MEM) {
 				*from_page_table = this_page;
-				this_page -= LOW_MEM;
-				this_page >>= 12;
-				mem_map[this_page]++;
+        mem_map[MAP_NR(this_page)] = 
+            increase_reference_or_panic(mem_map_entry);
 			}
 		}
-	}
+  }
 	invalidate();
 	return 0;
 }
@@ -197,13 +262,26 @@ int copy_page_tables(unsigned long from,unsigned long to,long size)
 unsigned long put_page(unsigned long page,unsigned long address)
 {
 	unsigned long tmp, *page_table;
-
+  unsigned char mem_map_entry;
 /* NOTE !!! This uses the fact that _pg_dir=0 */
 
 	if (page < LOW_MEM || page >= HIGH_MEMORY)
 		printk("Trying to put page %p at %p\n",page,address);
-	if (mem_map[(page-LOW_MEM)>>12] != 1)
-		printk("mem_map disagrees with %p at %p\n",page,address);
+  mem_map_entry = mem_map[MAP_NR(page)];
+  if (!IS_CLAIMED(mem_map_entry)) {
+    printk(
+        "Trying to put a page without marking it claimed first! page: %p, "
+        "address: %p\n", 
+        page, 
+        address);
+  }
+  if (!IS_SHARED(mem_map_entry) && REFERENCE_COUNT(mem_map_entry) != 1) {
+    printk(
+        "Trying to put a page but the page count is not 1! "
+        "page: %p, address: %p\n",
+        page,
+        address);
+  }
 	page_table = (unsigned long *) ((address>>20) & 0xffc);
 	if ((*page_table)&1)
 		page_table = (unsigned long *) (0xfffff000 & *page_table);
@@ -214,6 +292,9 @@ unsigned long put_page(unsigned long page,unsigned long address)
 		page_table = (unsigned long *) tmp;
 	}
 	page_table[(address>>12) & 0x3ff] = page | 7;
+  if (IS_SHARED(mem_map_entry)) {
+    mem_map[MAP_NR(page)] = increase_reference_or_panic(mem_map_entry);
+  }
 /* no need for invalidate */
 	return page;
 }
@@ -221,17 +302,23 @@ unsigned long put_page(unsigned long page,unsigned long address)
 void un_wp_page(unsigned long * table_entry)
 {
 	unsigned long old_page,new_page;
+  unsigned char mem_map_entry;
 
 	old_page = 0xfffff000 & *table_entry;
-	if (old_page >= LOW_MEM && mem_map[MAP_NR(old_page)]==1) {
+  mem_map_entry = mem_map[MAP_NR(old_page)];
+  if (IS_SHARED(mem_map_entry)) {
+    panic("shared page causes write page fault, something went wrong!");
+  }
+	if (old_page >= LOW_MEM && REFERENCE_COUNT(mem_map_entry) == 1) {
 		*table_entry |= 2;
 		invalidate();
 		return;
 	}
 	if (!(new_page=get_free_page()))
 		oom();
-	if (old_page >= LOW_MEM)
-		mem_map[MAP_NR(old_page)]--;
+  if (old_page >= LOW_MEM) {
+    mem_map[MAP_NR(old_page)] = decrease_reference_or_panic(mem_map_entry, 0);
+  }
 	*table_entry = new_page | 7;
 	invalidate();
 	copy_page(old_page,new_page);
@@ -296,6 +383,7 @@ static int try_to_share(unsigned long address, struct task_struct * p)
 	unsigned long from_page;
 	unsigned long to_page;
 	unsigned long phys_addr;
+  unsigned char mem_map_entry;
 
 	from_page = to_page = ((address>>20) & 0xffc);
 	from_page += ((p->start_code>>20) & 0xffc);
@@ -327,10 +415,9 @@ static int try_to_share(unsigned long address, struct task_struct * p)
 /* share them: write-protect */
 	*(unsigned long *) from_page &= ~2;
 	*(unsigned long *) to_page = *(unsigned long *) from_page;
+  mem_map_entry = mem_map[MAP_NR(phys_addr)];
+  mem_map[MAP_NR(phys_addr)] = increase_reference_or_panic(mem_map_entry);
 	invalidate();
-	phys_addr -= LOW_MEM;
-	phys_addr >>= 12;
-	mem_map[phys_addr]++;
 	return 1;
 }
 
