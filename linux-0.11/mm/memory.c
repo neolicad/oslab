@@ -71,9 +71,8 @@ static inline unsigned char increase_reference_or_panic(
 }
 
 static inline unsigned char decrease_reference_or_panic(
-    unsigned char mem_map_entry, int map_nr) {
+    unsigned char mem_map_entry) {
   if (mem_map_entry >> 2 == 0) {
-    printk("decrease_reference_or_panic panic: mem_map_entry: 0x%x, map_nr: %d\n", mem_map_entry, map_nr);
     panic("Trying to decrease the reference count of mem_map entry, but the "
         "count is already 0!");
   }
@@ -114,12 +113,11 @@ unsigned long get_free_page(void) {
   if (!(page=get_free_page_internal())) {
     return 0;
   }
-  mem_map_entry = mem_map[MAP_NR(page)];
   /* 
    * We don't need to check the reference count here because it is guaranteed 
    * to be 0, since this is a clear page.
    */
-  mem_map[MAP_NR(page)] = mem_map_entry + 0x4;
+  mem_map[MAP_NR(page)] += 0x4;
   return page;
 }
 
@@ -130,10 +128,6 @@ unsigned long get_free_shared_page(void) {
   }
   mem_map[MAP_NR(page)] |= 0x2;
   return page;
-}
-
-unsigned char get_mem_map_value(unsigned long page) {
-  return mem_map[MAP_NR(page)];
 }
 
 /*
@@ -148,7 +142,7 @@ void free_page(unsigned long addr)
 	if (addr >= HIGH_MEMORY)
 		panic("trying to free nonexistent page");
   mem_map_entry = mem_map[MAP_NR(addr)];
-  mem_map_entry = decrease_reference_or_panic(mem_map_entry, MAP_NR(addr));
+  mem_map_entry = decrease_reference_or_panic(mem_map_entry);
   if (!IS_SHARED(mem_map_entry) && REFERENCE_COUNT(mem_map_entry) == 0) {
     mem_map_entry = CLEAR_PAGE;
   }
@@ -317,7 +311,7 @@ void un_wp_page(unsigned long * table_entry)
 	if (!(new_page=get_free_page()))
 		oom();
   if (old_page >= LOW_MEM) {
-    mem_map[MAP_NR(old_page)] = decrease_reference_or_panic(mem_map_entry, 0);
+    mem_map[MAP_NR(old_page)] = decrease_reference_or_panic(mem_map_entry);
   }
 	*table_entry = new_page | 7;
 	invalidate();
