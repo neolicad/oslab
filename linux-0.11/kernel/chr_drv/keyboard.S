@@ -211,7 +211,7 @@ func:
 	pushl %eax
 	pushl %ecx
 	pushl %edx
-	call show_stat
+	# call show_stat
 	popl %edx
 	popl %ecx
 	popl %eax
@@ -225,11 +225,21 @@ func:
 	cmpb $11,%al
 	ja end_func
 ok_func:
+  cmpb $11,%al
+  je flip_ciper
 	cmpl $4,%ecx		/* check that there is enough room */
 	jl end_func
 	movl func_table(,%eax,4),%eax
 	xorl %ebx,%ebx
 	jmp put_queue
+flip_ciper:
+  movb ciper_text, %al
+  cmpb $0, %al 
+  je set_ciper
+  movb $0, ciper_text
+  ret
+set_ciper:
+  movb $1, ciper_text
 end_func:
 	ret
 

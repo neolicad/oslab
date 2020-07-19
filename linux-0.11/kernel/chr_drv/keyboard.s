@@ -242,7 +242,7 @@ func:
 	pushl %eax
 	pushl %ecx
 	pushl %edx
-	call show_stat
+	# call show_stat
 	popl %edx
 	popl %ecx
 	popl %eax
@@ -256,11 +256,21 @@ func:
 	cmpb $11,%al
 	ja end_func
 ok_func:
+  cmpb $11,%al
+  je flip_ciper
 	cmpl $4,%ecx		
 	jl end_func
 	movl func_table(,%eax,4),%eax
 	xorl %ebx,%ebx
 	jmp put_queue
+flip_ciper:
+  movb ciper_text, %al
+  cmpb $0, %al 
+  je set_ciper
+  movb $0, ciper_text
+  ret
+set_ciper:
+  movb $1, ciper_text
 end_func:
 	ret
 
@@ -272,7 +282,7 @@ func_table:
 	.long 0x455b5b1b,0x465b5b1b,0x475b5b1b,0x485b5b1b
 	.long 0x495b5b1b,0x4a5b5b1b,0x4b5b5b1b,0x4c5b5b1b
 
-# 294 "keyboard.S"
+# 304 "keyboard.S"
 
 key_map:
 	.byte 0,27
@@ -323,7 +333,7 @@ alt_map:
 	.byte '|
 	.fill 10,1,0
 
-# 449 "keyboard.S"
+# 459 "keyboard.S"
 
 
 
