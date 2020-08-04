@@ -44,7 +44,7 @@
 # 14 "keyboard.S" 2
 
 .text
-.globl keyboard_interrupt
+.globl keyboard_interrupt, should_encrypt_text
 
 
 
@@ -59,6 +59,7 @@ buf = 16
 mode:	.byte 0		
 leds:	.byte 2		
 e0:	.byte 0
+should_encrypt_text: .byte 0
 
 
 
@@ -270,7 +271,7 @@ func_table:
 	.long 0x455b5b1b,0x465b5b1b,0x475b5b1b,0x485b5b1b
 	.long 0x495b5b1b,0x4a5b5b1b,0x4b5b5b1b,0x4c5b5b1b
 
-# 292 "keyboard.S"
+# 293 "keyboard.S"
 
 key_map:
 	.byte 0,27
@@ -321,7 +322,7 @@ alt_map:
 	.byte '|
 	.fill 10,1,0
 
-# 447 "keyboard.S"
+# 448 "keyboard.S"
 
 
 

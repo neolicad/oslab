@@ -13,7 +13,7 @@
 #include <linux/config.h>
 
 .text
-.globl keyboard_interrupt
+.globl keyboard_interrupt, should_encrypt_text
 
 /*
  * these are for the keyboard read functions
@@ -28,6 +28,7 @@ buf = 16
 mode:	.byte 0		/* caps, alt, ctrl and shift mode */
 leds:	.byte 2		/* num-lock, caps, scroll-lock mode (nom-lock on) */
 e0:	.byte 0
+should_encrypt_text: .byte 0
 
 /*
  *  con_int is the real interrupt routine that reads the

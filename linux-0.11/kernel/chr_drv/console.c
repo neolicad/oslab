@@ -78,6 +78,8 @@ static unsigned char	attr=0x07;
 
 static void sysbeep(void);
 
+extern unsigned char should_encrypt_text;
+
 /*
  * this is what the terminal answers to a ESC-Z or csi0c
  * query (= vt100 response).
@@ -458,6 +460,14 @@ void con_write(struct tty_struct * tty)
 						pos -= video_size_row;
 						lf();
 					}
+          if (
+              should_encrypt_text
+              && c != '\r'
+              && c != '\n'
+              && c != ' '
+              && c != '\t') {
+            c = '*';
+          }
 					__asm__("movb attr,%%ah\n\t"
 						"movw %%ax,%1\n\t"
 						::"a" (c),"m" (*(short *)pos)

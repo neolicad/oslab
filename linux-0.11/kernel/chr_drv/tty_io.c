@@ -102,8 +102,6 @@ struct tty_queue * table_list[]={
 	&tty_table[2].read_q, &tty_table[2].write_q
 	};
 
-unsigned char should_encrypt_text = 0;
-
 void tty_init(void)
 {
 	rs_init();
@@ -319,14 +317,6 @@ int tty_write(unsigned channel, char * buf, int nr)
 			}
 			b++; nr--;
 			cr_flag = 0;
-      if (
-          should_encrypt_text 
-          && c != '\r' 
-          && c != '\n' 
-          && c != ' ' 
-          && c != '\t') {
-        c = '*';
-      }
 			PUTCH(c,tty->write_q);
 		}
 		tty->write(tty);
