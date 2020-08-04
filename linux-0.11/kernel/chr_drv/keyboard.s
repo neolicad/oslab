@@ -239,13 +239,6 @@ cur_table:
 
 
 func:
-	pushl %eax
-	pushl %ecx
-	pushl %edx
-	# call show_stat
-	popl %edx
-	popl %ecx
-	popl %eax
 	subb $0x3B,%al
 	jb end_func
 	cmpb $9,%al
@@ -256,23 +249,18 @@ func:
 	cmpb $11,%al
 	ja end_func
 ok_func:
-  cmpb $11,%al
-  je flip_ciper
+  cmpb $11,%al    
+  jne 1f
+  xorb $1, should_encrypt_text 
+  ret
+1:
 	cmpl $4,%ecx		
 	jl end_func
 	movl func_table(,%eax,4),%eax
 	xorl %ebx,%ebx
 	jmp put_queue
-flip_ciper:
-  movb ciper_text, %al
-  cmpb $0, %al 
-  je set_ciper
-  movb $0, ciper_text
-  ret
-set_ciper:
-  movb $1, ciper_text
 end_func:
-	ret
+  ret
 
 
 
@@ -282,7 +270,7 @@ func_table:
 	.long 0x455b5b1b,0x465b5b1b,0x475b5b1b,0x485b5b1b
 	.long 0x495b5b1b,0x4a5b5b1b,0x4b5b5b1b,0x4c5b5b1b
 
-# 304 "keyboard.S"
+# 292 "keyboard.S"
 
 key_map:
 	.byte 0,27
@@ -333,7 +321,7 @@ alt_map:
 	.byte '|
 	.fill 10,1,0
 
-# 459 "keyboard.S"
+# 447 "keyboard.S"
 
 
 

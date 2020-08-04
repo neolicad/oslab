@@ -208,13 +208,6 @@ cur_table:
  * this routine handles function keys
  */
 func:
-	pushl %eax
-	pushl %ecx
-	pushl %edx
-	# call show_stat
-	popl %edx
-	popl %ecx
-	popl %eax
 	subb $0x3B,%al
 	jb end_func
 	cmpb $9,%al
@@ -225,23 +218,18 @@ func:
 	cmpb $11,%al
 	ja end_func
 ok_func:
-  cmpb $11,%al
-  je flip_ciper
+  cmpb $11,%al    /* F12 */
+  jne 1f
+  xorb $1, should_encrypt_text /* flip should_encrypt_text */
+  ret
+1:
 	cmpl $4,%ecx		/* check that there is enough room */
 	jl end_func
 	movl func_table(,%eax,4),%eax
 	xorl %ebx,%ebx
 	jmp put_queue
-flip_ciper:
-  movb ciper_text, %al
-  cmpb $0, %al 
-  je set_ciper
-  movb $0, ciper_text
-  ret
-set_ciper:
-  movb $1, ciper_text
 end_func:
-	ret
+  ret
 
 /*
  * function keys send F1:'esc [ [ A' F2:'esc [ [ B' etc.
