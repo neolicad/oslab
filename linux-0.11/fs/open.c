@@ -177,13 +177,13 @@ int sys_open(const char * filename,int flag,int mode)
 				return -EPERM;
 			}
 	}
-/* If it is a proc file, we need to prepare the proc info */
-  if (S_ISPROC(inode->i_mode)) {
-    proc_write(inode, f);
-  }
 /* Likewise with block-devices: check for floppy_change */
 	if (S_ISBLK(inode->i_mode))
 		check_disk_change(inode->i_zone[0]);
+/* If it is a proc file: write the current process status to memory */
+  if (S_ISPROC(inode->i_mode)) {
+    proc_write(inode, f);
+  }
 	f->f_mode = inode->i_mode;
 	f->f_flags = flag;
 	f->f_count = 1;
@@ -211,6 +211,10 @@ int sys_close(unsigned int fd)
 		panic("Close: file count is 0");
 	if (--filp->f_count)
 		return (0);
+/* 
+ * There's no reference to the file now, clear the process status info in 
+ * memory which was written when openning the file 
+ */
   if (S_ISPROC(filp->f_inode->i_mode)) {
     proc_clear(filp->f_inode, filp);
   }

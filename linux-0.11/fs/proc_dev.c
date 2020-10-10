@@ -9,7 +9,7 @@
 #define MESSAGE_LENGTH 1000
 
 extern int vsprintf(char *buf, const char *fmt, va_list args);
-int sprintf(char *buf, const char *fmt, ...);
+static int sprintf(char *buf, const char *fmt, ...);
 static int count_ones(char b);
 
 struct proc_info_list {
@@ -49,7 +49,7 @@ int proc_read(
   int i;
 
   type = inode->i_zone[0];
-  if (type >= NR_PROC_INFOS) {
+  if (type > 1) {
     return -ERANGE;
   }
   if ((info=proc.infos[filp->f_ext[0]]) == NULL) {
@@ -69,25 +69,21 @@ int proc_read(
   return count;
 }
 
-/* TODO(neolicad): solve concurrency. */
 void proc_write(struct m_inode * inode, struct file *filp) {
   unsigned char type;
   struct proc_info *info;
   char *content;
-  struct buffer_head *bh;
-  char *b_data;
-  int used;
   int length, total_length=0;
   int i,j;
   int empty_slot;
 
   type = inode->i_zone[0];
-  if (type >= NR_PROC_INFOS) {
+  if (type > 1) {
     panic("proc_write: inode type out of range!");
   }
   lock_proc();
-  for (empty_slot = 0; i < NR_PROC_INFOS; empty_slot++) {
-    if (proc.infos[i] == NULL) {
+  for (empty_slot = 0; empty_slot < NR_PROC_INFOS; empty_slot++) {
+    if (proc.infos[empty_slot] == NULL) {
       break;
     }
   }
@@ -129,9 +125,12 @@ void proc_write(struct m_inode * inode, struct file *filp) {
     }
     info->length = total_length;
   } else if (type == 1) {
-    struct super_block *super;
     /* hdinfo */
-    /* TODO: clean up super block? */
+    struct super_block *super;
+    struct buffer_head *bh;
+    char *b_data;
+    int used;
+
     if (!(super=get_super(inode->i_dev))) {
       panic("[proc_write] Failed to read super_block!");
     }
@@ -214,13 +213,8 @@ void proc_write(struct m_inode * inode, struct file *filp) {
 }
 
 void proc_clear(struct m_inode *inode, struct file *filp) {
-  unsigned char type;
   struct proc_info *info;
 
-  type = inode->i_zone[0];
-  if (type >= NR_PROC_INFOS) {
-    panic("proc_clear: inode type out of range!");
-  }
   lock_proc();
   if ((info=proc.infos[filp->f_ext[0]]) == NULL) {
     panic("proc_clear: trying to clear an already-cleared entry!");
@@ -231,7 +225,7 @@ void proc_clear(struct m_inode *inode, struct file *filp) {
   unlock_proc();
 }
 
-int sprintf(char *buf, const char *fmt, ...) {
+static int sprintf(char *buf, const char *fmt, ...) {
   int length;
   va_list va;
 
@@ -244,6 +238,7 @@ int sprintf(char *buf, const char *fmt, ...) {
 static int count_ones(char b) {
   int i;
   int count = 0;
+
   for (i = 0; i < 8; i++) {
     count += (b & 0x1);
     b >>= 1;
