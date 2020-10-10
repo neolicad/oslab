@@ -16,7 +16,7 @@ CPP	=gcc-3.4 -E -nostdinc -I../include
 	$(AS) -o $*.o $<
 
 OBJS=	open.o read_write.o inode.o file_table.o buffer.o super.o \
-	block_dev.o char_dev.o file_dev.o stat.o exec.o pipe.o namei.o \
+	block_dev.o char_dev.o file_dev.o proc_dev.o stat.o exec.o pipe.o namei.o \
 	bitmap.o fcntl.o ioctl.o truncate.o
 
 fs.o: $(OBJS)
@@ -61,6 +61,7 @@ file_dev.o: file_dev.c ../include/errno.h ../include/fcntl.h \
   ../include/sys/types.h ../include/linux/sched.h ../include/linux/head.h \
   ../include/linux/fs.h ../include/linux/mm.h ../include/signal.h \
   ../include/linux/kernel.h ../include/asm/segment.h
+proc_dev.o: proc_dev.c ../include/asm/segment.h ../include/linux/fs.h
 file_table.o: file_table.c ../include/linux/fs.h ../include/sys/types.h
 inode.o: inode.c ../include/string.h ../include/sys/stat.h \
   ../include/sys/types.h ../include/linux/sched.h ../include/linux/head.h \

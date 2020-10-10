@@ -16,6 +16,9 @@
 #include <linux/kernel.h>
 #include <asm/segment.h>
 
+extern void proc_write(struct m_inode *inode, struct file *filp);
+extern void proc_clear(struct m_inode *inode, struct file *filp);
+
 int sys_ustat(int dev, struct ustat * ubuf)
 {
 	return -ENOSYS;
@@ -174,6 +177,10 @@ int sys_open(const char * filename,int flag,int mode)
 				return -EPERM;
 			}
 	}
+/* If it is a proc file, we need to prepare the proc info */
+  if (S_ISPROC(inode->i_mode)) {
+    proc_write(inode, f);
+  }
 /* Likewise with block-devices: check for floppy_change */
 	if (S_ISBLK(inode->i_mode))
 		check_disk_change(inode->i_zone[0]);
@@ -204,6 +211,9 @@ int sys_close(unsigned int fd)
 		panic("Close: file count is 0");
 	if (--filp->f_count)
 		return (0);
+  if (S_ISPROC(filp->f_inode->i_mode)) {
+    proc_clear(filp->f_inode, filp);
+  }
 	iput(filp->f_inode);
 	return (0);
 }

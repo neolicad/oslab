@@ -24,6 +24,9 @@ static inline _syscall0(int,fork)
 static inline _syscall0(int,pause)
 static inline _syscall1(int,setup,void *,BIOS)
 static inline _syscall0(int,sync)
+static inline _syscall2(int,mkdir,const char *,_path,mode_t,mode)
+static inline _syscall1(int,close,int,fildes)
+static inline _syscall3(int,mknod,const char *,pathname,mode_t,mode,dev_t,dev)
 
 #include <linux/tty.h>
 #include <linux/sched.h>
@@ -31,11 +34,13 @@ static inline _syscall0(int,sync)
 #include <asm/system.h>
 #include <asm/io.h>
 
+#include <errno.h>
 #include <stddef.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #include <linux/fs.h>
 
@@ -168,11 +173,40 @@ static char * envp[] = { "HOME=/usr/root", NULL };
 void init(void)
 {
 	int pid,i;
+  int fd;
 
 	setup((void *) &drive_info);
 	(void) open("/dev/tty0",O_RDWR,0);
 	(void) dup(0);
 	(void) dup(0);
+  /* Create files under /proc/. */
+  if (mkdir("/proc", 0755) == -1) {
+    if (errno == EEXIST) {
+      printf("/proc already exists.\n");
+    } else {
+      printf("Failed to create file /proc!\n");
+      /* Halt. */
+      while (1) ;
+    }
+  }
+  if (mknod("/proc/psinfo", 0444 | S_IFPROC, 0) == -1) {
+    if (errno == EEXIST) {
+      printf("/proc/psinfo already exists.\n");
+    } else {
+      printf("failed to create /proc/psinfo!\n");
+      /* Halt. */
+      while (1) ;
+    }
+  }
+  if (mknod("/proc/hdinfo", 0444 | S_IFPROC, 1) == -1) {
+    if (errno == EEXIST) {
+      printf("/proc/hdinfo already exists.\n");
+    } else {
+      printf("failed to create /proc/hdinfo!\n");
+      /* Halt. */
+      while (1) ;
+    }
+  }
 	printf("%d buffers = %d bytes buffer space\n\r",NR_BUFFERS,
 		NR_BUFFERS*BLOCK_SIZE);
 	printf("Free mem: %d bytes\n\r",memory_end-main_memory_start);

@@ -48,6 +48,7 @@ void buffer_init(long buffer_end);
 #define NR_BUFFERS nr_buffers
 #define BLOCK_SIZE 1024
 #define BLOCK_SIZE_BITS 10
+#define NR_PROC_INFOS 64
 #ifndef NULL
 #define NULL ((void *) 0)
 #endif
@@ -119,6 +120,7 @@ struct file {
 	unsigned short f_count;
 	struct m_inode * f_inode;
 	off_t f_pos;
+  unsigned int f_ext[9];
 };
 
 struct super_block {
@@ -157,6 +159,11 @@ struct d_super_block {
 struct dir_entry {
 	unsigned short inode;
 	char name[NAME_LEN];
+};
+
+struct proc_info {
+  unsigned int length;
+  char *content;
 };
 
 extern struct m_inode inode_table[NR_INODE];
