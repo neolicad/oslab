@@ -123,6 +123,10 @@ void proc_write(struct m_inode * inode, struct file *filp) {
       content += length;
       total_length += length;
     }
+    if (total_length > MESSAGE_LENGTH) {
+      panic("[proc_write] info message is longer than the claimed string "
+          "memory!");
+    }
     info->length = total_length;
   } else if (type == 1) {
     /* hdinfo */
@@ -206,6 +210,10 @@ void proc_write(struct m_inode * inode, struct file *filp) {
     }
     content += length;
     total_length += length;
+    if (total_length > MESSAGE_LENGTH) {
+      panic("[proc_write] info message is longer than the claimed string "
+          "memory!");
+    }
     info->length = total_length;
   }
   proc.infos[empty_slot] = info;
