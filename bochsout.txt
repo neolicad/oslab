@@ -34,12 +34,12 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xf6390010. after alignment, vector=0xf6391000
+00000000000i[MEM0 ] allocated memory at 0xf62e6010. after alignment, vector=0xf62e7000
 00000000000i[MEM0 ] 16.00MB
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('./bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/39424 ('./bochs/vgabios.bin')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Sat Oct 10 11:12:20 2020 (time0=1602353540)
+00000000000i[CMOS ] Setting initial clock to: Sat Oct 10 13:30:40 2020 (time0=1602361840)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: './linux-0.11/Image' ro=0, h=2,t=80,spt=18
@@ -229,26 +229,26 @@
 00022368213i[FDD  ] read() on floppy image returns 0
 00022413168i[FDD  ] read() on floppy image returns 0
 00022463638i[BIOS ] int13_harddisk: function 15, unmapped device for ELDL=81
-00202800000i[     ] cpu loop quit, shutting down simulator
-00202800000i[CPU  ] CPU is in protected mode (active)
-00202800000i[CPU  ] CS.d_b = 32 bit
-00202800000i[CPU  ] SS.d_b = 32 bit
-00202800000i[CPU  ] | EAX=0001c140  EBX=00000000  ECX=0001d16c  EDX=00fc0000
-00202800000i[CPU  ] | ESP=0001d0f8  EBP=0002300c  ESI=00000002  EDI=00000001
-00202800000i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf ZF af PF cf
-00202800000i[CPU  ] | SEG selector     base    limit G D
-00202800000i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00202800000i[CPU  ] |  CS:0008( 0001| 0|  0) 00000000 00000fff 1 1
-00202800000i[CPU  ] |  DS:0010( 0002| 0|  0) 00000000 00000fff 1 1
-00202800000i[CPU  ] |  SS:0010( 0002| 0|  0) 00000000 00000fff 1 1
-00202800000i[CPU  ] |  ES:0010( 0002| 0|  0) 00000000 00000fff 1 1
-00202800000i[CPU  ] |  FS:0017( 0002| 1|  3) 00000000 0000009f 1 1
-00202800000i[CPU  ] |  GS:0017( 0002| 1|  3) 00000000 0000009f 1 1
-00202800000i[CPU  ] | EIP=00006bcb (00006bcb)
-00202800000i[CPU  ] | CR0=0x8000001b CR1=0 CR2=0x0805d40c
-00202800000i[CPU  ] | CR3=0x00000000 CR4=0x00000000
-00202800000i[CPU  ] >> mov eax, dword ptr ds:[edx+0x210] : 8B8210020000
-00202800000i[CMOS ] Last time is 1602353590 (Sat Oct 10 11:13:10 2020)
-00202800000i[XGUI ] Exit
-00202800000i[     ] restoring default signal behavior
-00202800000i[CTRL ] quit_sim called with exit code 1
+00582000000i[     ] cpu loop quit, shutting down simulator
+00582000000i[CPU  ] CPU is in protected mode (active)
+00582000000i[CPU  ] CS.d_b = 32 bit
+00582000000i[CPU  ] SS.d_b = 32 bit
+00582000000i[CPU  ] | EAX=0001c140  EBX=00000000  ECX=0001d25c  EDX=00000020
+00582000000i[CPU  ] | ESP=0001d0f8  EBP=0002300c  ESI=00000002  EDI=00000001
+00582000000i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af PF cf
+00582000000i[CPU  ] | SEG selector     base    limit G D
+00582000000i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00582000000i[CPU  ] |  CS:0008( 0001| 0|  0) 00000000 00000fff 1 1
+00582000000i[CPU  ] |  DS:0010( 0002| 0|  0) 00000000 00000fff 1 1
+00582000000i[CPU  ] |  SS:0010( 0002| 0|  0) 00000000 00000fff 1 1
+00582000000i[CPU  ] |  ES:0010( 0002| 0|  0) 00000000 00000fff 1 1
+00582000000i[CPU  ] |  FS:0017( 0002| 1|  3) 00000000 0000009f 1 1
+00582000000i[CPU  ] |  GS:0017( 0002| 1|  3) 00000000 0000009f 1 1
+00582000000i[CPU  ] | EIP=00006b73 (00006b73)
+00582000000i[CPU  ] | CR0=0x8000001b CR1=0 CR2=0x0804253c
+00582000000i[CPU  ] | CR3=0x00000000 CR4=0x00000000
+00582000000i[CPU  ] >> jbe .+0x0000005a (0x00006bcf) : 765A
+00582000000i[CMOS ] Last time is 1602361985 (Sat Oct 10 13:33:05 2020)
+00582000000i[XGUI ] Exit
+00582000000i[     ] restoring default signal behavior
+00582000000i[CTRL ] quit_sim called with exit code 1

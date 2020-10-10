@@ -25,7 +25,6 @@ static inline _syscall0(int,pause)
 static inline _syscall1(int,setup,void *,BIOS)
 static inline _syscall0(int,sync)
 static inline _syscall2(int,mkdir,const char *,_path,mode_t,mode)
-static inline _syscall1(int,close,int,fildes)
 static inline _syscall3(int,mknod,const char *,pathname,mode_t,mode,dev_t,dev)
 
 #include <linux/tty.h>
@@ -173,7 +172,6 @@ static char * envp[] = { "HOME=/usr/root", NULL };
 void init(void)
 {
 	int pid,i;
-  int fd;
 
 	setup((void *) &drive_info);
 	(void) open("/dev/tty0",O_RDWR,0);
